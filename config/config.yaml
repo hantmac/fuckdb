@@ -16,4 +16,4 @@ log:
   log_rotate_size: 1
   log_backup_count: 7
 
-
+genFilePath: ./

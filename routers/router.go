@@ -23,6 +23,7 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	{
 		db2s.GET("/health", services.HealthCheck)
 		db2s.POST("/db2struct", DbToGoStruct)
+		db2s.POST("/download", DownloadStructFile)
 	}
 	return g
 }
