@@ -24,6 +24,14 @@ func DownloadStructFile(c *gin.Context) {
 		return
 	}
 
+	if downLoadInfo.StructName == "" {
+		downLoadInfo.StructName = "new_struct"
+	}
+	if downLoadInfo.Content == "" {
+		services.HandleError(http.StatusBadRequest, c, err)
+		return
+	}
+
 	var filename = filepath.Join(viper.GetString("genFilePath"), downLoadInfo.StructName) + ".go"
 	if !utils.CheckFileIsExist(filename) {
 		file, err := os.Create(filename) //创建文件
