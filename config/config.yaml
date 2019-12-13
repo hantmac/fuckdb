@@ -1,5 +1,3 @@
-runmode: debug                 # 开发模式, debug, release, test
-addr: :8080                  # HTTP绑定端口
 name:  DbToGoStruct         # API Server的名字
 gormlog: true
 server:
