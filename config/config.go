@@ -11,7 +11,6 @@ type Config struct {
 	Name string
 }
 
-// 监控配置文件变化并热加载程序
 func (c *Config) WatchConfig() {
 	viper.WatchConfig()
 	viper.OnConfigChange(func(e fsnotify.Event) {
@@ -21,17 +20,17 @@ func (c *Config) WatchConfig() {
 
 func (c *Config) Init() error {
 	if c.Name != "" {
-		viper.SetConfigFile(c.Name) // 如果指定了配置文件，则解析指定的配置文件
+		viper.SetConfigName(c.Name)
 	} else {
-		viper.AddConfigPath("./config") // 如果没有指定配置文件，则解析默认的配置文件
+		viper.AddConfigPath("./config")
 		viper.SetConfigName("config")
 	}
-	viper.SetConfigType("yaml")   // 设置配置文件格式为YAML
-	viper.AutomaticEnv()          // 读取匹配的环境变量
-	viper.SetEnvPrefix("monitor") // 读取环境变量的前缀为monitor
+	viper.SetConfigType("yaml")
+	viper.AutomaticEnv()
+	viper.SetEnvPrefix("monitor")
 	replacer := strings.NewReplacer(".", "_")
 	viper.SetEnvKeyReplacer(replacer)
-	if err := viper.ReadInConfig(); err != nil { // viper解析配置文件
+	if err := viper.ReadInConfig(); err != nil {
 		return err
 	}
 	c.initLog()
@@ -52,21 +51,21 @@ func (c *Config) initLog() {
 	}
 
 	log.InitWithConfig(&passLagerCfg)
-	log.Info("初始化日志设置成功")
+	log.Info("Init log setting success")
 }
 
-// main.go初始化配置文件
+// main.go init config
 func InitConfig(cfg string) error {
 	c := Config{
 		Name: cfg,
 	}
 
-	// 初始化配置文件
+	//init config file
 	if err := c.Init(); err != nil {
 		return err
 	}
 
-	// 监控配置文件变化并热加载程序
+	// watch hot update
 	c.WatchConfig()
 
 	return nil

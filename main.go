@@ -17,7 +17,7 @@ import (
 func main() {
 
 	g := gin.New()
-	// LoggerWithFormatter middleware 会代理所有API的日志输出到stdout
+	// LoggerWithFormatter middleware
 	// By default gin.DefaultWriter = os.Stdout
 	g.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
 		b, _ := ioutil.ReadAll(param.Request.Body)
@@ -45,14 +45,14 @@ func main() {
 		middlewares...,
 	)
 
-	// 初始化配置
+	// init config
 	if err := config.InitConfig(""); err != nil {
 		log.Error("init config error:%s", err)
 		panic(err)
 	}
-	log.Info("初始化配置成功")
+	log.Info("config init success")
 
-	// 运行服务器
+	// run server
 	host := viper.GetString("server.host")
 	port := viper.GetString("server.port")
 	if err := g.Run(host + ":" + port); err != nil {
