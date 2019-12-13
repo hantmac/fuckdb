@@ -7,7 +7,6 @@ logs/
 *.so
 
 # Distribution / packaging
-build/
 develop-eggs/
 dist/
 downloads/
