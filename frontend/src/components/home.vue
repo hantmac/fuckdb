@@ -2,7 +2,7 @@
    <div class="m-doc">
       <div class="m-header">
         <div class="f-tit">
-          <h3>表单</h3>
+          <h3>FDGGS</h3>
         </div>
 <el-form ref="form" :model="form" :rules="rules" label-width="130px" size="medium">
   <el-row>
