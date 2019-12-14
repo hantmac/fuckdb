@@ -1,6 +1,6 @@
-# Fdggs
-`Fdggs` is the short name of `From database generate go struct`.
-Fdggs generates a go compatible struct type with the required column names, data types, and annotations just fill in the database information in the web UI. Making go web develop very easy by saving a lot of time writing structure.`Fdggs`is based/inspired by the work of Seth Shelnutt's db2struct, and Db2Struct is based/inspired by the work of ChimeraCoder's gojson package gojson.
+# fuckdb
+`fuckdb` helps you fuck the db when you write go struct.
+`fuckdb` generates a go compatible struct type with the required column names, data types, and annotations just fill in the database information in the web UI. Making go web develop very easy by saving a lot of time writing structure.`fuckdb`is based/inspired by the work of Seth Shelnutt's db2struct, and Db2Struct is based/inspired by the work of ChimeraCoder's gojson package gojson.
 # Web UI
 - Easy to use
 Only a few clicks on the web UI can generate the corresponding golang struct with `ORM` or `json` or `xm` ... tags.
@@ -15,7 +15,7 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 ![](https://tva1.sinaimg.cn/large/006tNbRwly1g9w531osobj31u90u0jzq.jpg)
 ### Source code deploy
 - git clone the source code
-- cd Fdggs/
+- cd fuckdb/
 - go run main.go
 - cd frontend && npm run dev/start
 - Use `localhost:8081` you will get the web UI
