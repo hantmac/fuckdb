@@ -10,6 +10,7 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 - Use `localhost:8081` you will get the next page
 ![](https://tva1.sinaimg.cn/large/006tNbRwgy1g9w1ru6tl4j31wb0u0aft.jpg)
 - Just Put your mariaDB/mysql info into it and you will get your golang code.
+- Click generate.
 ### Source code deploy
 - git clone the source code
 - cd Fdggs/
