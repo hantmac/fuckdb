@@ -1,4 +1,4 @@
-# fdggs-web
+# fuckdb-web
 
 > A Vue.js project
 
