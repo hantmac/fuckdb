@@ -2,7 +2,7 @@
    <div class="m-doc">
       <div class="m-header">
         <div class="f-tit">
-          <h3>FDGGS</h3>
+          <h3>FuckDb</h3>
         </div>
 <el-form ref="form" :model="form" :rules="rules" label-width="130px" size="medium">
   <el-row>
@@ -143,7 +143,7 @@ export default {
   methods: {
     GetDb2struct(){
       axios({
-        url: "http://localhost:8080/api/db2struct",
+        url: "http://localhost:8000/api/db2struct",
         method: "post",
         data: {
             "mysql_host": this.form.mysql_host,

@@ -2,7 +2,7 @@ name:  DbToGoStruct         # API Server的名字
 gormlog: true
 server:
   host: 0.0.0.0
-  port: 8080
+  port: 8000
 log:
   writers: file,stdout
   logger_level: DEBUG

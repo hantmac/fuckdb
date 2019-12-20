@@ -1,5 +1,5 @@
 all: gotool
-	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v .
+	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o fuckdb -v .
 install:
 	go install
 clean:
