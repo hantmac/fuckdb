@@ -3,12 +3,6 @@ services:
   master:
     image: registry.cn-hangzhou.aliyuncs.com/cloud001/fuckdb:v0.1
     container_name: fuckdb
-    networks:
-    - app_net
     ports:
     - "8080:8080" # frontend
     - "8000:8000" # backend
-networks:
-  app_net:
-    # Use a custom driver
-    driver: host
