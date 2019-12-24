@@ -91,6 +91,7 @@
 
 <script>
 import axios from "axios"
+import API from "../config/index"
 export default {
   name: 'home',
   data () {
@@ -143,7 +144,7 @@ export default {
   methods: {
     GetDb2struct(){
       axios({
-        url: "http://localhost:8000/api/db2struct",
+        url:  `${API.APIdb2struct}/api/db2struct`,
         method: "post",
         data: {
             "mysql_host": this.form.mysql_host,
