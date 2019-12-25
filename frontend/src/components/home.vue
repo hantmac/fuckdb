@@ -6,6 +6,22 @@
         </div>
 <el-form ref="form" :model="form" :rules="rules" label-width="130px" size="medium">
   <el-row>
+    <el-col :span="24">
+      <el-form-item label="Change DB">
+         <el-select v-model="value" placeholder="请选择" @change="changeDBList" clearable @clear="clearDBList">
+          <el-option
+            v-for="item in optionsDBLog"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            >
+          </el-option>
+        </el-select>
+            <el-button @click="cleanDb">清除</el-button>
+      </el-form-item>
+    </el-col>
+  </el-row>
+  <el-row>
     <el-col :span="8">
       <el-form-item prop="mysql_host"  label="mysql_host"> <el-input v-model="form.mysql_host" clearable></el-input></el-form-item>
     </el-col>
@@ -84,13 +100,12 @@
     </div>
     <div class="m-tool">
       <div class="u-shelter"></div>
-      <!-- <iframe id="ToolIframe" src="https://tool.lu/coderunner/" height="1000" width="100%" frameborder="0"></iframe> -->
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios"
+import service from "../config/api"
 import API from "../config/index"
 export default {
   name: 'home',
@@ -135,36 +150,140 @@ export default {
           mysql_port: [
             {type: 'number', message: 'port必须为整数字' , trigger: 'blur'}
           ]
-        }
+        },
+        optionsDBLog: [],
+        FuckDbList: [],
+        value: ''
     }
   },
   mounted(){
-
+    this.setFuckDbChangeDBList()
   },
   methods: {
     GetDb2struct(){
-      axios({
+      let data = {
+          "mysql_host": this.form.mysql_host,
+          "mysql_port": this.form.mysql_port,
+          "mysql_db": this.form.mysql_db,
+          "mysql_table": this.form.mysql_table,
+          "mysql_passwd": this.form.mysql_passwd,
+          "mysql_user": this.form.mysql_user,
+          "package_name": this.form.package_name,
+          "struct_name": this.form.struct_name,
+          "json_annotation": this.form.json_annotation === "true" ? true : false,
+          "xml_annotation": this.form.xml_annotation === "true" ? true : false,
+          "gorm_annotation":this.form.gorm_annotation === "true" ? true : false
+      }
+
+      service({
         url:  `${API.APIdb2struct}/api/db2struct`,
         method: "post",
-        data: {
-            "mysql_host": this.form.mysql_host,
-            "mysql_port": this.form.mysql_port,
-            "mysql_db": this.form.mysql_db,
-            "mysql_table": this.form.mysql_table,
-            "mysql_passwd": this.form.mysql_passwd,
-            "mysql_user": this.form.mysql_user,
-            "package_name": this.form.package_name,
-            "struct_name": this.form.struct_name,
-            "json_annotation": this.form.json_annotation === "true" ? true : false,
-            "xml_annotation": this.form.xml_annotation === "true" ? true : false,
-            "gorm_annotation":this.form.gorm_annotation === "true" ? true : false
-        }
+        data,
       }).then(res => {
         if(res.data.status === "0"){
-                  console.log(11111, this.code, res.data)
           this.code = res.data.data;
+          this.setFuckDbList(this.form)
         }
+      }).catch(error =>{
+        if(error.response.status == 500){
+          try {
+            this.$message.error(error.response.data.error);
+          } catch (error) {
+            this.$message.error("异常错误！");
+          }
+        }else{
+          this.$message.error("异常错误！");
+        }
+
       })
+    },
+    setFuckDbList(data){
+      let FuckDbList = window.localStorage.getItem("FuckDb_List")
+      if(FuckDbList){
+          FuckDbList = JSON.parse(FuckDbList)
+          let FuckDbListDistinguish = false
+
+          FuckDbList.forEach(obj => {
+            if(obj.mysql_user === data.mysql_user && obj.mysql_host === data.mysql_host){
+              FuckDbListDistinguish = true
+            }
+          })
+
+          if(!FuckDbListDistinguish){
+            FuckDbList.push(data)
+            window.localStorage.setItem("FuckDb_List", JSON.stringify(FuckDbList))
+          }
+      }else{
+        FuckDbList = [data]
+        window.localStorage.setItem("FuckDb_List", JSON.stringify([data]))
+      }
+      this.optionsDBLog = []
+      FuckDbList.forEach((obj, index) =>{
+        this.optionsDBLog.push({
+          value: index,
+          label: `${obj.mysql_user}@${obj.mysql_host}`
+        })
+         if(obj.mysql_user === data.mysql_user && obj.mysql_host === data.mysql_host){
+           this.value = index
+          }
+      })
+      this.FuckDbList = FuckDbList
+    },
+    setFuckDbChangeDBList(){
+      let FuckDbList = window.localStorage.getItem("FuckDb_List")
+      if(FuckDbList){
+        FuckDbList = JSON.parse(FuckDbList)
+        this.FuckDbList = FuckDbList
+        this.optionsDBLog = []
+        FuckDbList.forEach((obj, index) =>{
+          this.optionsDBLog.push({
+            value: index,
+            label: `${obj.mysql_user}@${obj.mysql_host}`
+          })
+        })
+      }
+    },
+    changeDBList(index){
+      if(index !== ""){
+        this.form = this.FuckDbList[index]
+      }
+    },
+    clearDBList(){
+      this.code = "package test"
+      this.form = {
+          "mysql_host": "",
+          "mysql_port": 3306,
+          "mysql_db": "",
+          "mysql_table": "",
+          "mysql_passwd": "",
+          "mysql_user": "",
+          "package_name": "",
+          "struct_name": "",
+          "json_annotation": "true",
+          "xml_annotation":  "true",
+          "gorm_annotation": "true"
+      }
+    },
+    cleanDb(){
+      this.value = ""
+      this.FuckDbList = []
+      this.optionsDBLog = []
+      this.code = "package test"
+      this.form = {
+          "mysql_host": "",
+          "mysql_port": 3306,
+          "mysql_db": "",
+          "mysql_table": "",
+          "mysql_passwd": "",
+          "mysql_user": "",
+          "package_name": "",
+          "struct_name": "",
+          "json_annotation": "true",
+          "xml_annotation":  "true",
+          "gorm_annotation": "true"
+      }
+
+      window.localStorage.setItem("FuckDb_List", "")
     },
     onSubmit(formName){
       this.$refs[formName].validate((valid) => {
