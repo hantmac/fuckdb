@@ -2,7 +2,7 @@ import axios from 'axios'
 
 
 const service = axios.create({
-	timeout: 8000
+	timeout: 80000
 })
 
 service.interceptors.request.use(config=> {
