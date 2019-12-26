@@ -4,7 +4,7 @@ if(process.env.NODE_ENV === "development"){
 }else if(process.env.NODE_ENV === "production"){
   APIdb2struct = "http://localhost:8000"
 }else{
-  APIdb2struct = "localhost:8000"
+  APIdb2struct = "http://localhost:8000"
 }
 
 export default {
