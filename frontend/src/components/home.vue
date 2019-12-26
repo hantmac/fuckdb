@@ -2,8 +2,18 @@
    <div class="m-doc">
       <div class="m-header">
         <div class="f-tit">
-          <h3>FuckDb</h3>
+          <h3 class="f-fl"> FuckDb</h3>
+          <el-dropdown class="f-fl m-dropdown" @command="handleCommand">
+            <span class="el-dropdown-link">导航工具<i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="FuckDb">FuckDb</el-dropdown-item>
+              <el-dropdown-item command="json-to-go">json-to-go</el-dropdown-item>
+            </el-dropdown-menu>
+        </el-dropdown>
         </div>
+      </div>
+      <div class="m-fuckDb" v-show="tabName == 'FuckDb'">
 <el-form ref="form" :model="form" :rules="rules" label-width="130px" size="medium">
   <el-row>
     <el-col :span="24">
@@ -94,12 +104,12 @@
     <el-button  @click="resetForm('form')">重置</el-button>
   </el-form-item>
 </el-form>
-      </div>
     <div class="m-body">
       <highlight-code lang="golang">{{code}}</highlight-code>
     </div>
-   <div class="m-tool">
-      <div class="u-shelter"></div>
+    </div>
+   <div class="m-tool" v-show="tabName == 'json-to-go'">
+      <iframe src="https://mholt.github.io/json-to-go/" frameborder="0"></iframe>
     </div>
   </div>
 </template>
@@ -112,6 +122,7 @@ export default {
   data () {
     return {
       code: "package test",
+      tabName: "FuckDb",
       form: {
           mysql_host: '',
           mysql_port: 3306,
@@ -194,7 +205,6 @@ export default {
         }else{
           this.$message.error("异常错误！");
         }
-
       })
     },
     setFuckDbList(data){
@@ -304,6 +314,14 @@ export default {
       this.value = ""
       this.$refs[formName].resetFields();
       this.setFuckDbChangeDBList()
+    },
+    handleCommand(command){
+      if(command === "FuckDb"){
+        document.getElementById("app").style.overflowY="auto"
+      }else{
+        document.getElementById("app").style.overflowY="hidden"
+      }
+      this.tabName = command;
     }
   }
 }
@@ -325,30 +343,27 @@ ul {
   height: 100%;
 }
 
-.m-body{
-}
-
 .m-header{
-  margin-top: 10px;
+  overflow: hidden;
+  padding: 10px 0;
 }
 .m-tool{
   position: relative;
 }
-.u-shelter{
-    position: absolute;
-    width: 100%;
-    height: 36px;
-    background: #ffff;
-}
-.u-shelter-1{
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 20px;
-  height: 30px;
-  background: #000;
-}
 .f-tit{
   margin-left: 10px;
+}
+.f-fl{
+  float: left;
+}
+.m-dropdown{
+  cursor: pointer;
+  margin: 5px 0 0 15px;
+  cursor: pointer;
+  color: #409EFF;
+}
+.m-tool, .m-tool iframe{
+  width: 100%;
+  height: 100%;
 }
 </style>
