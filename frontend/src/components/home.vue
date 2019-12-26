@@ -296,7 +296,9 @@ export default {
         });
     },
     resetForm(formName){
-       this.$refs[formName].resetFields();
+      this.value = ""
+      this.$refs[formName].resetFields();
+      this.setFuckDbChangeDBList()
     }
   }
 }
