@@ -98,7 +98,7 @@
     <div class="m-body">
       <highlight-code lang="golang">{{code}}</highlight-code>
     </div>
-    <div class="m-tool">
+   <div class="m-tool">
       <div class="u-shelter"></div>
     </div>
   </div>
@@ -206,13 +206,18 @@ export default {
           FuckDbList.forEach(obj => {
             if(obj.mysql_user === data.mysql_user && obj.mysql_host === data.mysql_host){
               FuckDbListDistinguish = true
+              obj.mysql_db = data.mysql_db
+              obj.mysql_table = data.mysql_table
+              obj.package_name = obj.package_name
+              obj.struct_name = obj.struct_name
+
             }
           })
 
           if(!FuckDbListDistinguish){
             FuckDbList.push(data)
-            window.localStorage.setItem("FuckDb_List", JSON.stringify(FuckDbList))
           }
+          window.localStorage.setItem("FuckDb_List", JSON.stringify(FuckDbList))
       }else{
         FuckDbList = [data]
         window.localStorage.setItem("FuckDb_List", JSON.stringify([data]))
@@ -342,9 +347,6 @@ ul {
   width: 20px;
   height: 30px;
   background: #000;
-}
-#ToolIframe{
-  display: none;
 }
 .f-tit{
   margin-left: 10px;
