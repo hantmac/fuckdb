@@ -159,7 +159,7 @@ export default {
             { required: true, message: 'struct_name不能为空' , trigger: 'blur'}
           ],
           mysql_port: [
-            {type: 'number', message: 'port必须为整数字' , trigger: 'blur'}
+            {required: true, type: 'number', message: 'port必须为整数字' , trigger: 'blur'}
           ]
         },
         optionsDBLog: [],
