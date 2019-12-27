@@ -4,7 +4,7 @@
         <div class="f-tit">
           <h3 class="f-fl"> FuckDb</h3>
           <el-dropdown class="f-fl m-dropdown" @command="handleCommand">
-            <span class="el-dropdown-link">导航工具<i class="el-icon-arrow-down el-icon--right"></i>
+            <span class="el-dropdown-link">Navigation<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="FuckDb">FuckDb</el-dropdown-item>
@@ -312,6 +312,7 @@ export default {
     },
     resetForm(formName){
       this.value = ""
+      this.code = "package test"
       this.$refs[formName].resetFields();
       this.setFuckDbChangeDBList()
     },
