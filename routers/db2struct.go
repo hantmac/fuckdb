@@ -22,6 +22,7 @@ type MysqlInfoReqData struct {
 	XmlAnnotation  bool   `json:"xml_annotation"`
 	JsonAnnotation bool   `json:"json_annotation"`
 	GormAnnotation bool   `json:"gorm_annotation"`
+	XormAnnotation bool   `json:"xorm_annotation`
 	GureGuTypes    bool   `json:"gure_gu_types"`
 }
 
@@ -58,7 +59,7 @@ func DbToGoStruct(c *gin.Context) {
 
 	structInfo, err := bases.Generate(*columnDataTypes, mysqlInfo.MysqlTable, mysqlInfo.StructName,
 		mysqlInfo.PackageName, mysqlInfo.JsonAnnotation, mysqlInfo.GormAnnotation,
-		mysqlInfo.XmlAnnotation, mysqlInfo.GureGuTypes)
+		mysqlInfo.XmlAnnotation, mysqlInfo.XormAnnotation, mysqlInfo.GureGuTypes)
 
 	if err != nil {
 		fmt.Println("Error in creating struct from json: " + err.Error())
