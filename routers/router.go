@@ -1,8 +1,8 @@
 package routers
 
 import (
-	"Fdggs/routers/middleware"
-	"Fdggs/services"
+	"fuckdb/routers/middleware"
+	"fuckdb/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

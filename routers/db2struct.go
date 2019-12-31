@@ -1,10 +1,10 @@
 package routers
 
 import (
-	"Fdggs/bases"
-	"Fdggs/services"
 	"errors"
 	"fmt"
+	"fuckdb/bases"
+	"fuckdb/services"
 	"github.com/gin-gonic/gin"
 	"github.com/lexkong/log"
 	"net/http"
@@ -22,7 +22,7 @@ type MysqlInfoReqData struct {
 	XmlAnnotation  bool   `json:"xml_annotation"`
 	JsonAnnotation bool   `json:"json_annotation"`
 	GormAnnotation bool   `json:"gorm_annotation"`
-	XormAnnotation bool   `json:"xorm_annotation`
+	XormAnnotation bool   `json:"xorm_annotation"`
 	GureGuTypes    bool   `json:"gure_gu_types"`
 }
 
