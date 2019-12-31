@@ -1,10 +1,10 @@
 package main
 
 import (
-	"Fdggs/config"
-	"Fdggs/routers"
-	"Fdggs/routers/middleware"
 	"fmt"
+	"fuckdb/routers/middleware"
+	"fuckdb/config"
+	"fuckdb/routers"
 	"github.com/gin-gonic/gin"
 	"github.com/lexkong/log"
 	"github.com/spf13/viper"
