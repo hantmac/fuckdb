@@ -62,7 +62,7 @@ func GetColumnsFromMysqlTable(mariadbUser string, mariadbPassword string, mariad
 }
 
 // Generate go struct entries for a map[string]interface{} structure
-func generateMysqlTypes(obj map[string]map[string]string, depth int, jsonAnnotation bool, gormAnnotation bool, xmlAnnotation bool, gureguTypes bool) string {
+func generateMysqlTypes(obj map[string]map[string]string, depth int, jsonAnnotation bool, gormAnnotation bool, xmlAnnotation bool, xormAnnotation bool, gureguTypes bool) string {
 	structure := "struct {"
 
 	keys := make([]string, 0, len(obj))
@@ -99,6 +99,9 @@ func generateMysqlTypes(obj map[string]map[string]string, depth int, jsonAnnotat
 
 		if xmlAnnotation == true {
 			annotations = append(annotations, fmt.Sprintf("xml:\"%s%s\"", key, primary))
+		}
+		if xormAnnotation == true {
+			annotations = append(annotations, fmt.Sprintf("xorm:\"%s%s\"", key, primary))
 		}
 		if len(annotations) > 0 {
 			structure += fmt.Sprintf("\n%s %s `%s`",
