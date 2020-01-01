@@ -1,6 +1,6 @@
 # fuckdb
 
-![](http://static.vue2.net/db.gif)
+![Example to show fuckdb](http://static.vue2.net/db.gif)
 
 `fuckdb` helps you fuck the db when you write go struct.
 `fuckdb` generates a go compatible struct type with the required column names, data types, and annotations just fill in the database information in the web UI. Making go web develop very easy by saving a lot of time writing structure.`fuckdb`is based/inspired by the work of Seth Shelnutt's db2struct, and Db2Struct is based/inspired by the work of ChimeraCoder's gojson package gojson.
