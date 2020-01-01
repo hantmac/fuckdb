@@ -88,7 +88,7 @@ func Generate(columnTypes map[string]map[string]string, tableName string, struct
 		pkgName,
 		structName,
 		dbTypes)
-	if gormAnnotation == true {
+	if gormAnnotation {
 		tableNameFunc := "// TableName sets the insert table name for this struct type\n" +
 			"func (" + strings.ToLower(string(structName[0])) + " *" + structName + ") TableName() string {\n" +
 			"	return \"" + tableName + "\"" +
