@@ -1,10 +1,10 @@
 let APIdb2struct
 if(process.env.NODE_ENV === "development"){
-  APIdb2struct = "http://10.29.194.207:8000"
+  APIdb2struct = "localhost:8088"
 }else if(process.env.NODE_ENV === "production"){
-  APIdb2struct = "http://10.29.194.207:8000"
+  APIdb2struct = "localhost:8088"
 }else{
-  APIdb2struct = "http://10.29.194.207:8000"
+  APIdb2struct = "localhost:8088"
 }
 
 export default {
