@@ -19,13 +19,14 @@ func GetColumnsFromMysqlTable(mariadbUser string, mariadbPassword string, mariad
 	} else {
 		db, err = sql.Open("mysql", mariadbUser+"@tcp("+mariadbHost+":"+strconv.Itoa(mariadbPort)+")/"+mariadbDatabase+"?&parseTime=True")
 	}
-	defer db.Close()
 
 	// Check for error in db, note this does not check connectivity but does check uri
 	if err != nil {
 		fmt.Println("Error opening mysql db: " + err.Error())
 		return nil, err
 	}
+
+	defer db.Close()
 
 	// Store colum as map of maps
 	columnDataTypes := make(map[string]map[string]string)
