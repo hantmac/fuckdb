@@ -19,13 +19,14 @@ func GetColumnsFromMysqlTable(mariadbUser string, mariadbPassword string, mariad
 	} else {
 		db, err = sql.Open("mysql", mariadbUser+"@tcp("+mariadbHost+":"+strconv.Itoa(mariadbPort)+")/"+mariadbDatabase+"?&parseTime=True")
 	}
-	defer db.Close()
 
 	// Check for error in db, note this does not check connectivity but does check uri
 	if err != nil {
 		fmt.Println("Error opening mysql db: " + err.Error())
 		return nil, err
 	}
+
+	defer db.Close()
 
 	// Store colum as map of maps
 	columnDataTypes := make(map[string]map[string]string)
@@ -62,7 +63,7 @@ func GetColumnsFromMysqlTable(mariadbUser string, mariadbPassword string, mariad
 }
 
 // Generate go struct entries for a map[string]interface{} structure
-func generateMysqlTypes(obj map[string]map[string]string, depth int, jsonAnnotation bool, gormAnnotation bool, xmlAnnotation bool, gureguTypes bool) string {
+func generateMysqlTypes(obj map[string]map[string]string, depth int, jsonAnnotation bool, gormAnnotation bool, xmlAnnotation bool, xormAnnotation bool, fakerAnnotation bool, gureguTypes bool) string {
 	structure := "struct {"
 
 	keys := make([]string, 0, len(obj))
@@ -84,21 +85,25 @@ func generateMysqlTypes(obj map[string]map[string]string, depth int, jsonAnnotat
 		}
 
 		// Get the corresponding go value type for this mysql type
-		var valueType string
-
-		valueType = mysqlTypeToGoType(mysqlType["value"], nullAble, gureguTypes)
+		valueType := mysqlTypeToGoType(mysqlType["value"], nullAble, gureguTypes)
 
 		fieldName := fmtFieldName(stringifyFirstChar(key))
 		var annotations []string
-		if gormAnnotation == true {
+		if gormAnnotation {
 			annotations = append(annotations, fmt.Sprintf("gorm:\"column:%s%s\"", key, primary))
 		}
-		if jsonAnnotation == true {
-			annotations = append(annotations, fmt.Sprintf("json:\"%s%s\"", key, primary))
+		if jsonAnnotation {
+			annotations = append(annotations, fmt.Sprintf("json:\"%s\"", key))
 		}
 
-		if xmlAnnotation == true {
-			annotations = append(annotations, fmt.Sprintf("xml:\"%s%s\"", key, primary))
+		if xmlAnnotation {
+			annotations = append(annotations, fmt.Sprintf("xml:\"%s\"", key))
+		}
+		if xormAnnotation {
+			annotations = append(annotations, fmt.Sprintf("xorm:\"%s%s\"", key, primary))
+		}
+		if fakerAnnotation {
+			annotations = append(annotations, fmt.Sprintf("faker:\"%s\"", key))
 		}
 		if len(annotations) > 0 {
 			structure += fmt.Sprintf("\n%s %s `%s`",

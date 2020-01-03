@@ -1,28 +1,30 @@
 package routers
 
 import (
-	"Fdggs/bases"
-	"Fdggs/services"
 	"errors"
 	"fmt"
+	"fuckdb/bases"
+	"fuckdb/services"
 	"github.com/gin-gonic/gin"
 	"github.com/lexkong/log"
 	"net/http"
 )
 
 type MysqlInfoReqData struct {
-	MysqlHost      string `json:"mysql_host"`
-	MysqlPort      int    `json:"mysql_port"`
-	MysqlDB        string `json:"mysql_db"`
-	MysqlTable     string `json:"mysql_table"`
-	MysqlPasswd    string `json:"mysql_passwd"`
-	MysqlUser      string `json:"mysql_user"`
-	PackageName    string `json:"package_name"`
-	StructName     string `json:"struct_name"`
-	XmlAnnotation  bool   `json:"xml_annotation"`
-	JsonAnnotation bool   `json:"json_annotation"`
-	GormAnnotation bool   `json:"gorm_annotation"`
-	GureGuTypes    bool   `json:"gure_gu_types"`
+	MysqlHost       string `json:"mysql_host"`
+	MysqlPort       int    `json:"mysql_port"`
+	MysqlDB         string `json:"mysql_db"`
+	MysqlTable      string `json:"mysql_table"`
+	MysqlPasswd     string `json:"mysql_passwd"`
+	MysqlUser       string `json:"mysql_user"`
+	PackageName     string `json:"package_name"`
+	StructName      string `json:"struct_name"`
+	XmlAnnotation   bool   `json:"xml_annotation"`
+	JsonAnnotation  bool   `json:"json_annotation"`
+	GormAnnotation  bool   `json:"gorm_annotation"`
+	XormAnnotation  bool   `json:"xorm_annotation"`
+	FakerAnnotation bool   `json:"faker_annotation"`
+	GureGuTypes     bool   `json:"gure_gu_types"`
 }
 
 func DbToGoStruct(c *gin.Context) {
@@ -58,7 +60,7 @@ func DbToGoStruct(c *gin.Context) {
 
 	structInfo, err := bases.Generate(*columnDataTypes, mysqlInfo.MysqlTable, mysqlInfo.StructName,
 		mysqlInfo.PackageName, mysqlInfo.JsonAnnotation, mysqlInfo.GormAnnotation,
-		mysqlInfo.XmlAnnotation, mysqlInfo.GureGuTypes)
+		mysqlInfo.XmlAnnotation, mysqlInfo.XormAnnotation, mysqlInfo.FakerAnnotation, mysqlInfo.GureGuTypes)
 
 	if err != nil {
 		fmt.Println("Error in creating struct from json: " + err.Error())
