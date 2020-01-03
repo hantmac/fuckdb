@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   master:
-    image: registry.cn-hangzhou.aliyuncs.com/cloud001/fuckdb:v0.1
+    image: cloud001/fuckdb:v0.01
     container_name: fuckdb
     ports:
     - "8080:8080" # frontend

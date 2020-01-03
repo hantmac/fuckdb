@@ -1,8 +1,8 @@
 package routers
 
 import (
-	"Fdggs/routers/middleware"
-	"Fdggs/services"
+	"fuckdb/routers/middleware"
+	"fuckdb/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -24,6 +24,8 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		db2s.GET("/health", services.HealthCheck)
 		db2s.POST("/db2struct", DbToGoStruct)
 		db2s.POST("/download", DownloadStructFile)
+		db2s.GET("/sql_str", services.FormatMysql)
+		db2s.GET("struct_sql", services.FromStructToSql)
 	}
 	return g
 }
