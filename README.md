@@ -1,4 +1,7 @@
+
 # fuckdb
+- [中文](https://github.com/hantmac/fuckdb/blob/master/README_zh.md)
+- English
 
 ![Example to show fuckdb](http://static.vue2.net/db.gif)
 
