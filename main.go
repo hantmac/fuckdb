@@ -13,6 +13,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/lexkong/log"
 	"github.com/spf13/viper"
@@ -23,8 +24,8 @@ import (
 func main() {
 
 	g := gin.Default()
-	g.Static("/dist", "./frontend/dist")
-	g.Static("/static", "./frontend/dist/static")
+	//Use frontend static
+	g.Use(static.Serve("/", static.LocalFile("./frontend/dist", false)))
 	// LoggerWithFormatter middleware
 	// By default gin.DefaultWriter = os.Stdout
 	g.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {

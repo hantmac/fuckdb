@@ -38,9 +38,6 @@ COPY --from=frontend-build /app/frontend/conf/fuckdb.conf /etc/nginx/conf.d
 # working directory
 WORKDIR /app
 
-# frontend port
-EXPOSE 8080
-
 # backend port
 EXPOSE 8000
 
