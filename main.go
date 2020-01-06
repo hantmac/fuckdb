@@ -1,22 +1,28 @@
 package main
 
 import (
+	"context"
+	"flag"
 	"fmt"
-	"fuckdb/routers/middleware"
 	"fuckdb/config"
 	"fuckdb/routers"
+	"fuckdb/routers/middleware"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"os/signal"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/lexkong/log"
 	"github.com/spf13/viper"
-	"io/ioutil"
-	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
 
-	g := gin.New()
+	g := gin.Default()
 	// LoggerWithFormatter middleware
 	// By default gin.DefaultWriter = os.Stdout
 	g.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
@@ -51,13 +57,37 @@ func main() {
 		panic(err)
 	}
 	log.Info("config init success")
-
+	var host = viper.GetString("server.host")
+	var port = viper.GetString("server.port")
+	fmt.Print(host + ":" + port)
+	var addr = flag.String("server addr", host+":"+port, "server addr")
 	// run server
-	host := viper.GetString("server.host")
-	port := viper.GetString("server.port")
-	if err := g.Run(host + ":" + port); err != nil {
-		log.Error("run server error:", err)
-		panic(err)
+	srv := http.Server{
+		Addr:    *addr,
+		Handler: g,
+	}
+	processd := make(chan struct{})
+	go func() {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt)
+		<-c
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		if err := srv.Shutdown(ctx); err != nil {
+			log.Error("server shutdown failed,err:%V\n", err)
+		}
+		log.Info("server shutdown gracefully")
+		close(processd)
+	}()
+
+	err := srv.ListenAndServe()
+	fmt.Println(*addr)
+	fmt.Println("server successly")
+	if err != http.ErrServerClosed {
+		log.Error("server not shutdown gracefully,err:%v", err)
 	}
 
+	<-processd
 }

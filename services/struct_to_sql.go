@@ -36,7 +36,6 @@ func FromStructToSql(c *gin.Context) {
 	f, err := parser.ParseFile(fset, structStr.FileName, structStr.StructStr, parser.ParseComments)
 	if err != nil {
 		log.Infof("parse [file:%s] failed:%v", structStr.FileName, err)
-
 	}
 
 	types = program.FindMatchStruct([]*ast.File{f}, matchFunc)
