@@ -23,6 +23,8 @@ import (
 func main() {
 
 	g := gin.Default()
+	g.Static("/dist", "./frontend/dist")
+	g.Static("/static", "./frontend/dist/static")
 	// LoggerWithFormatter middleware
 	// By default gin.DefaultWriter = os.Stdout
 	g.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
