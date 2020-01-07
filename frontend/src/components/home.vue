@@ -9,8 +9,14 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="FuckDb">FuckDb</el-dropdown-item>
               <el-dropdown-item command="json-to-go">json-to-go</el-dropdown-item>
+              <!-- <el-dropdown-item command="struct-to-sql">struct-to-sql</el-dropdown-item> -->
             </el-dropdown-menu>
         </el-dropdown>
+         <iframe
+    style="margin-left: 15px; margin-bottom:-7px;"
+    frameborder="0" scrolling="0" width="91px" height="20px"
+    src="https://ghbtns.com/github-btn.html?user=hantmac&repo=fuckdb&type=star&count=true" >
+</iframe>
         </div>
       </div>
       <div class="m-fuckDb" v-show="tabName == 'FuckDb'">
@@ -18,7 +24,7 @@
   <el-row>
     <el-col :span="24">
       <el-form-item label="Change DB">
-         <el-select v-model="value" placeholder="请选择" @change="changeDBList" clearable @clear="clearDBList">
+         <el-select v-model="value" placeholder="select DB" @change="changeDBList" clearable @clear="clearDBList">
           <el-option
             v-for="item in optionsDBLog"
             :key="item.value"
@@ -27,7 +33,7 @@
             >
           </el-option>
         </el-select>
-            <el-button @click="cleanDb">清除</el-button>
+            <el-button @click="cleanDb">Clear</el-button>
       </el-form-item>
     </el-col>
   </el-row>
@@ -100,8 +106,18 @@
    </el-row>
 
   <el-form-item>
-    <el-button type="primary" @click="onSubmit('form')">生成</el-button>
-    <el-button  @click="resetForm('form')">重置</el-button>
+   <div class="f-fl">
+      <el-button type="primary" @click="onSubmit('form')">Create</el-button>
+    <el-button  @click="resetForm('form')">Reset</el-button>
+   </div>
+    <div class="u-tips">
+      <p>
+        <b>声明：</b> 本工具不会记录任何用户信息，请放心使用
+      </p>
+      <p>
+        <b>Disclaimer:</b> This tool does not record any user information, please use it with confidence
+      </p>
+    </div>
   </el-form-item>
 </el-form>
     <div class="m-body">
@@ -111,18 +127,60 @@
    <div class="m-tool" v-show="tabName == 'json-to-go'">
       <iframe src="https://mholt.github.io/json-to-go/" frameborder="0"></iframe>
     </div>
+    <div class="" v-show="tabName == 'struct-to-sql'">
+      <el-tabs type="border-card">
+  <el-tab-pane label="Create"></el-tab-pane>
+  <el-tab-pane label="Clean"></el-tab-pane>
+  <el-tab-pane label="Copy"></el-tab-pane>
+</el-tabs>
+     <editor
+    height="400px"
+    ref="editor"
+    :content="content"
+    :options="{
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true,
+        tabSize:2
+    }"
+    :fontSize='14'
+    :lang="'golang'"
+    :theme="'eclipse'"
+    @onChange="editorChange"
+    @init="editorInit">
+    </editor>
+     <highlight-code lang="sql">{{codeSql}}</highlight-code>
+    </div>
   </div>
 </template>
 
 <script>
 import service from "../config/api"
 import API from "../config/index"
+import Editor from 'vue2x-ace-editor'
+
 export default {
   name: 'home',
+  components:{
+        Editor
+  },
   data () {
     return {
       code: "package test",
-      tabName: "FuckDb",
+      content: `
+//code...
+type testDB struct {
+    Status        string \`gorm:"column:Status" json:"Status" xml:"Status"\`
+}
+`,
+      tabName:  "FuckDb", //"struct-to-sql"
+      codeSql: `
+      CREATE TABLE \`auto_generated\`
+      (
+        \`registration_date\` varchar(128) NOT NULL ,
+
+      ) engine=innodb DEFAULT charset=utf8mb4;
+      `,
       form: {
           mysql_host: '',
           mysql_port: 3306,
@@ -138,28 +196,28 @@ export default {
         },
         rules:{
           mysql_host: [
-             { required: true, message: 'mysql_host不能为空' , trigger: 'blur'}
+             { required: true, message: 'mysql_host is empty' , trigger: 'blur'}
           ],
           mysql_db: [
-             { required: true, message: 'mysql_db不能为空' , trigger: 'blur'}
+             { required: true, message: 'mysql_db is empty' , trigger: 'blur'}
           ],
           mysql_table: [
-            { required: true, message: 'mysql_table不能为空' , trigger: 'blur'}
+            { required: true, message: 'mysql_table is empty' , trigger: 'blur'}
           ],
           mysql_passwd: [
-            { required: true, message: 'mysql_passwd不能为空' , trigger: 'blur'}
+            { required: true, message: 'mysql_passwd is empty' , trigger: 'blur'}
           ],
           mysql_user: [
-            { required: true, message: 'mysql_user不能为空' , trigger: 'blur'}
+            { required: true, message: 'mysql_user is empty' , trigger: 'blur'}
           ],
           package_name: [
-            { required: true, message: 'package_name不能为空' , trigger: 'blur'}
+            { required: true, message: 'package_name is empty' , trigger: 'blur'}
           ],
           struct_name: [
-            { required: true, message: 'struct_name不能为空' , trigger: 'blur'}
+            { required: true, message: 'struct_name is empty' , trigger: 'blur'}
           ],
           mysql_port: [
-            {type: 'number', message: 'port必须为整数字' , trigger: 'blur'}
+            {required: true, type: 'number', message: 'port must be integer' , trigger: 'blur'}
           ]
         },
         optionsDBLog: [],
@@ -171,6 +229,24 @@ export default {
     this.setFuckDbChangeDBList()
   },
   methods: {
+    editorInit(){
+      require("brace/ext/language_tools");
+      require(`brace/mode/golang`);
+      require(`brace/snippets/golang`);
+      require(`brace/theme/eclipse`);
+    },
+    editorChange(){
+      this.$refs.editor.setCompleteData([
+        {
+          name: "test",//名称
+          value: "test",//值
+          caption: "test",//字幕，展示在列表的内容
+          meta: "test",//展示类型
+          type: "local",//类型
+          score: 1000 // 分数越大排在越上面
+        }
+      ]);
+    },
     GetDb2struct(){
       let data = {
           "mysql_host": this.form.mysql_host,
@@ -367,4 +443,15 @@ ul {
   width: 100%;
   height: 100%;
 }
+.m-etitor-tool{
+  height: 39px;
+}
+.u-tips{
+  padding-left: 20px;
+  color: #aaa;
+  font-size: 12px;
+  float: left;
+  line-height: 18px;
+}
+
 </style>
