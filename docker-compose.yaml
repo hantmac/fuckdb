@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   master:
-    image: cloud001/fuckdb:v0.02
+    image: cloud001/fuckdb:v0.03
     container_name: fuckdb
     ports:
     - "8000:8000" # backend
