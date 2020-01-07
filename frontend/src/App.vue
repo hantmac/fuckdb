@@ -19,4 +19,7 @@ export default {
 html, body, #app{
   height: 100%;
 }
+.el-tabs__content{
+  display: none
+}
 </style>
