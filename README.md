@@ -29,4 +29,5 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 - The same operation with docker deployment.
 
 ### Support
-[![jetbrains](https://s1.ax1x.com/2020/03/26/G9nmVA.png)]( https://www.jetbrains.com/?from=fuckdb)
+
+[![jetbrains](https://s1.ax1x.com/2020/03/26/G9uQoR.png)]( https://www.jetbrains.com/?from=fuckdb)
