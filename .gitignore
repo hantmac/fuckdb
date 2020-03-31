@@ -1,4 +1,6 @@
 logs/
+gin-bin
+dist/
 gin.bin
 .idea/
 
