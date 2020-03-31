@@ -3,6 +3,7 @@ module fuckdb
 go 1.13
 
 require (
+	github.com/apex/log v1.1.2
 	github.com/bxcodec/faker/v3 v3.2.0 // indirect
 	github.com/fatih/astrewrite v0.0.0-20191207154002-9094e544fcef
 	github.com/fatih/camelcase v1.0.0 // indirect
@@ -20,4 +21,5 @@ require (
 	github.com/pinzolo/casee v0.0.0-20191019093852-17765ba5eb57
 	github.com/spf13/viper v1.6.1
 	golang.org/x/tools v0.0.0-20190328211700-ab21143f2384
+	gopkg.in/yaml.v2 v2.2.4
 )
