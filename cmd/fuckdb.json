@@ -2,10 +2,10 @@
   "db": {
     "host": "localhost",
     "port": 3306,
-    "password": "hanshanboss",
+    "password": "password",
     "user": "root",
     "table": "cars",
-    "database": "ent_example",
+    "database": "db_example",
     "packageName": "test",
     "structName": "test",
     "jsonAnnotation": true,
