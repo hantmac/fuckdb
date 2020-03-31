@@ -23,7 +23,7 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 ### Docker deploy
 - modify your backend ip in  `frontend/src/config/index.js`
 - docker-compose up -d
-- Use `localhost:8081` you will get the next page
+- Use `localhost:8000` you will get the next page
 ![](https://tva1.sinaimg.cn/large/006tNbRwgy1g9w1ru6tl4j31wb0u0aft.jpg)
 - Just Put your mariaDB/mysql info into it and you will get your golang code.
 - Click generate.
