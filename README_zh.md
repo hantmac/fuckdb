@@ -62,5 +62,7 @@ If you don't want to use the web UI, you have a more fast way to generate struct
 
 在 `./fuckdb/cmd` 下面可以找到对应操作系统的可执行文件
 
+ps: 务必保证存储数据库信息的json文件和可执行文件在同一目录下。
+
 
 欢迎试用&反馈&Contribute。代码地址：https://github.com/hantmac/fuckdb

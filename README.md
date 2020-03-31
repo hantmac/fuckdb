@@ -53,6 +53,8 @@ If you don't want to use the web UI, you have a more fast way to generate struct
 
 In `fuckdb/cmd` you can find exec file for different os.
 
+ps: Make sure the json file and cmd file in the same dir.
+
 ### Support
 
 [![jetbrains](https://s1.ax1x.com/2020/03/26/G9uQoR.png)]( https://www.jetbrains.com/?from=fuckdb)
