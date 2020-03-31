@@ -9,7 +9,8 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="FuckDb">FuckDb</el-dropdown-item>
               <el-dropdown-item command="json-to-go">json-to-go</el-dropdown-item>
-              <el-dropdown-item command="struct-to-sql">struct-to-sql</el-dropdown-item>
+               <el-dropdown-item command="yaml-to-json">yaml-to-json</el-dropdown-item>
+              <!-- <el-dropdown-item command="struct-to-sql">struct-to-sql</el-dropdown-item> -->
             </el-dropdown-menu>
         </el-dropdown>
          <iframe
@@ -126,6 +127,9 @@
     </div>
    <div class="m-tool" v-show="tabName == 'json-to-go'">
       <iframe src="https://mholt.github.io/json-to-go/" frameborder="0"></iframe>
+    </div>
+    <div class="m-tool" v-show="tabName == 'yaml-to-json'">
+      <iframe src="https://onlineyamltools.com/convert-yaml-to-json" frameborder="0"></iframe>
     </div>
     <div class="" v-show="tabName == 'struct-to-sql'">
       <div class="m-tabs">

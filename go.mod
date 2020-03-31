@@ -8,11 +8,13 @@ require (
 	github.com/fatih/camelcase v1.0.0 // indirect
 	github.com/fatih/structtag v1.2.0
 	github.com/fsnotify/fsnotify v1.4.7
+	github.com/gin-contrib/static v0.0.0-20191128031702-f81c604d8ac2
 	github.com/gin-gonic/gin v1.5.0
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/lexkong/log v0.0.0-20180607165131-972f9cd951fc
 	github.com/liudanking/gorm2sql v0.0.0-20180430122841-1fe6dd257bc8
 	github.com/liudanking/goutil v0.0.0-20190930035630-6830c8a1be22 // indirect
+	github.com/nsf/gocode v0.0.0-20190302080247-5bee97b48836 // indirect
 	github.com/onsi/ginkgo v1.11.0 // indirect
 	github.com/onsi/gomega v1.8.1 // indirect
 	github.com/pinzolo/casee v0.0.0-20191019093852-17765ba5eb57

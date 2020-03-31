@@ -1,8 +1,8 @@
 {
-  "name": "fdggs-web",
+  "name": "fuckdb",
   "version": "1.0.0",
   "description": "A Vue.js project",
-  "author": "weiwei.yang <weiwei.yang@zhangmen.com>",
+  "author": " <yww>",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
