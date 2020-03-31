@@ -11,6 +11,15 @@
 - Easy to use
 Only a few clicks on the web UI can generate the corresponding golang struct with `ORM` or `json` or `xm` ... tags.
 # How to use?
+
+### Source code deploy
+- git clone the source code
+- cd fuckdb/
+- cd frontend && npm run build
+- go run main.go
+- Use `localhost:8000` you will get the web UI
+- The same operation with docker deployment.
+
 ### Docker deploy
 - modify your backend ip in  `frontend/src/config/index.js`
 - docker-compose up -d
@@ -20,13 +29,7 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 - Click generate.
 - Boom！Enjoy your coffee and copy your struct code.
 ![](https://tva1.sinaimg.cn/large/006tNbRwly1g9w531osobj31u90u0jzq.jpg)
-### Source code deploy
-- git clone the source code
-- cd fuckdb/
-- go run main.go
-- cd frontend && npm run dev/start
-- Use `localhost:8081` you will get the web UI
-- The same operation with docker deployment.
+
 
 ### Support
 
