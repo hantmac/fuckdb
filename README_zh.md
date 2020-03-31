@@ -22,7 +22,7 @@ type InsInfo struct {
 这是gorm对应的数据库表的struct映射，即使数据表的字段不多，如果是手动写起来也是一些重复性的工作。像MySQL这种关系型数据库，我们一般会用orm去操作数据库，于是就想，mysql的数据表能不能来自动生成golang 的struct定义。我们知道mysql有个自带的数据库`information_schema`，有一张表`COLUMNS`，它的字段包含数据库名、表名、字段名、字段类型等，我们可以利用这个表的数据，把对应的表的字段信息读取出来，然后再根据golang的语法规则，生成对应的struct。
 	调研了一下目前有一些命令行工具像 db2struct等，感觉用起来比较繁琐，在想能不能提供一个开箱即用的环境，提供web界面，我们只需要填写数据库信息，就可以一键生成对应的ORM的struct，于是就诞生了这个项目：https://github.com/hantmac/fuckdb
 
-如果你的数据库在本地，那么只需要执行 `docker-compose up -d`，访问`localhost:8088`，你就会得到下面的界面：
+如果你的数据库在本地，那么只需要执行 `docker-compose up -d`，访问`localhost:8000`，你就会得到下面的界面：
 
 ![](https://user-gold-cdn.xitu.io/2020/1/1/16f61a60169d552d?w=2459&h=1080&f=jpeg&s=136206)
 
