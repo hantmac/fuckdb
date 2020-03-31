@@ -9,7 +9,6 @@ gin.bin
 
 # Distribution / packaging
 develop-eggs/
-dist/
 downloads/
 parts/
 sdist/

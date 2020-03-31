@@ -27,3 +27,7 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 - cd frontend && npm run dev/start
 - Use `localhost:8081` you will get the web UI
 - The same operation with docker deployment.
+
+### Support
+
+[![jetbrains](https://s1.ax1x.com/2020/03/26/G9uQoR.png)]( https://www.jetbrains.com/?from=fuckdb)

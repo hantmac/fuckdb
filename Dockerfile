@@ -1,4 +1,4 @@
-FROM golang:1.12 AS backend-build
+FROM golang:1.13 AS backend-build
 
 WORKDIR /go/src/app
 COPY . .
@@ -37,9 +37,6 @@ COPY --from=frontend-build /app/frontend/dist /app/frontend/dist
 COPY --from=frontend-build /app/frontend/conf/fuckdb.conf /etc/nginx/conf.d
 # working directory
 WORKDIR /app
-
-# frontend port
-EXPOSE 8080
 
 # backend port
 EXPOSE 8000
