@@ -30,6 +30,28 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 - Boom！Enjoy your coffee and copy your struct code.
 ![](https://tva1.sinaimg.cn/large/006tNbRwly1g9w531osobj31u90u0jzq.jpg)
 
+### fuckdb CMD
+If you don't want to use the web UI, you have a more fast way to generate struct - fuckdb cmd.
+- First, edit the fuckdb.json in `./fuckdb/cmd`  to add your mysql info
+```
+{
+  "db": {
+    "host": "localhost",
+    "port": 3306,
+    "password": "password",
+    "user": "root",
+    "table": "cars",
+    "database": "example",
+    "packageName": "test",
+    "structName": "test",
+    "jsonAnnotation": true,
+    "gormAnnotation": true
+  }
+}
+```
+- `go run  fuckdb_cmd.gom` then copy your code and enjoy it.
+
+In `fuckdb/cmd` you can find exec file for different os.
 
 ### Support
 
