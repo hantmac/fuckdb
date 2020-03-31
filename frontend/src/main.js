@@ -2,11 +2,12 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
-import { Dropdown, DropdownMenu, DropdownItem, Form, FormItem, Select, Option, Button, Row, Col, Input, Radio, RadioGroup, Tabs, TabPane} from 'element-ui'
+import { Dropdown, DropdownMenu, DropdownItem, Form, FormItem, Select, Option, Button, Row, Col, Input, Radio, RadioGroup, Tabs, TabPane, ButtonGroup, Message} from 'element-ui'
 import VueHighlightJS from 'vue-highlight.js';
 import go from 'highlight.js/lib/languages/go';
 import sql from 'highlight.js/lib/languages/sql';
 import 'highlight.js/styles/atom-one-dark.css'
+
 
 Vue.use(Dropdown);
 Vue.use(DropdownMenu);
@@ -23,6 +24,8 @@ Vue.use(Radio);
 Vue.use(RadioGroup);
 Vue.use(Tabs);
 Vue.use(TabPane);
+Vue.use(ButtonGroup);
+Vue.prototype.$message = Message;
 
 import router from './router'
 
