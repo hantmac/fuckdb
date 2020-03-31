@@ -9,7 +9,7 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="FuckDb">FuckDb</el-dropdown-item>
               <el-dropdown-item command="json-to-go">json-to-go</el-dropdown-item>
-              <!-- <el-dropdown-item command="struct-to-sql">struct-to-sql</el-dropdown-item> -->
+              <el-dropdown-item command="struct-to-sql">struct-to-sql</el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
          <iframe
@@ -128,13 +128,17 @@
       <iframe src="https://mholt.github.io/json-to-go/" frameborder="0"></iframe>
     </div>
     <div class="" v-show="tabName == 'struct-to-sql'">
-      <el-tabs type="border-card">
-  <el-tab-pane label="Create"></el-tab-pane>
-  <el-tab-pane label="Clean"></el-tab-pane>
-  <el-tab-pane label="Copy"></el-tab-pane>
-</el-tabs>
+      <div class="m-tabs">
+        <el-button-group>
+          <el-button size="medium" icon="el-icon-plus">Create</el-button>
+          <el-button size="medium" icon="el-icon-delete">Clean</el-button>
+          <el-button size="medium" icon="el-icon-copy-document">Copy</el-button>
+        </el-button-group>
+      </div>
      <editor
+     class="m-editor"
     height="400px"
+    width="100%"
     ref="editor"
     :content="content"
     :options="{
@@ -143,9 +147,9 @@
         enableLiveAutocompletion: true,
         tabSize:2
     }"
-    :fontSize='14'
+    :fontSize='12'
     :lang="'golang'"
-    :theme="'eclipse'"
+    :theme="'textmate'"
     @onChange="editorChange"
     @init="editorInit">
     </editor>
@@ -233,7 +237,7 @@ type testDB struct {
       require("brace/ext/language_tools");
       require(`brace/mode/golang`);
       require(`brace/snippets/golang`);
-      require(`brace/theme/eclipse`);
+      require(`brace/theme/textmate`);
     },
     editorChange(){
       this.$refs.editor.setCompleteData([
@@ -453,5 +457,11 @@ ul {
   float: left;
   line-height: 18px;
 }
+.m-tabs{
+  padding: 10px 0 10px 20px;
+  background: #f5f7fa;
+}
+.m-editor{
 
+}
 </style>
