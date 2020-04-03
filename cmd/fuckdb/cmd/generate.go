@@ -30,8 +30,8 @@ var mysqlInfo = `{
     "user": "root",
     "table": "table name",
     "database": "db_example",
-    "packageName": "package name",
-    "structName": "struct name",
+    "packageName": "packageName",
+    "structName": "structName",
     "jsonAnnotation": true,
     "gormAnnotation": true
       }
