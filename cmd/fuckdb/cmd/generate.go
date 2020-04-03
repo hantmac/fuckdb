@@ -58,7 +58,7 @@ var generateCmd = &cobra.Command{
       }
 }`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("generate called")
+		fmt.Println("## fuckdb.json generated ##")
 		f, err := os.Create(fileName)
 		defer f.Close()
 		if err != nil {
