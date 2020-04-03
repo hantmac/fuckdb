@@ -1,9 +1,9 @@
-package main
+package fuckdb_go
 
 import (
 	"encoding/json"
 	"fmt"
-	"fuckdb/bases"
+	"fuckdb/cmd/fuckdb/bases"
 	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"log"
@@ -42,13 +42,13 @@ func GetDbConf() (*DBConf, error) {
 	return &mysqlInfo, nil
 }
 
-func main() {
+func FuckdbGo() string {
 
 	mysqlInfo, err := GetDbConf()
 
 	if mysqlInfo.Db.Host == "" || mysqlInfo.Db.Database == "" || mysqlInfo.Db.Table == "" {
 		log.Fatal("the host, database, table cant be empty")
-		return
+		return ""
 	}
 	if mysqlInfo.Db.Port == 0 {
 		mysqlInfo.Db.Port = 3306
@@ -58,7 +58,7 @@ func main() {
 	if err != nil {
 		fmt.Println("Error in selecting column data information from mysql information schema")
 		log.Fatal("Error in selecting column data information from mysql information schema")
-		return
+		return ""
 	}
 
 	if mysqlInfo.Db.StructName == "" {
@@ -72,5 +72,5 @@ func main() {
 		mysqlInfo.Db.PackageName, mysqlInfo.Db.JSONAnnotation, mysqlInfo.Db.GormAnnotation,
 		false, false, false, true)
 
-	fmt.Println(string(structInfo))
+	return string(structInfo)
 }
