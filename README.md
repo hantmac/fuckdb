@@ -33,13 +33,15 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 ### fuckdb Lite
 #### install
 - macos 
-  ```
+ ```
   brew tap hantmac/tap && brew install fuckdb
-  ```
+ ```
 - Linux 
-  ```
+
+ ```
 curl https://github.com/hantmac/fuckdb/releases/download/v0.2/fuckdb_linux.tar.gz
   ```
+  
 - windows 
   download the windows file in release
 
