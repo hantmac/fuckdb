@@ -43,16 +43,21 @@ type InsInfo struct {
 
 #### install
 - macos 
+
   ```
   brew tap hantmac/tap && brew install fuckdb
   ```
+  
 - Linux 
-  ```
+
+ ```
 curl https://github.com/hantmac/fuckdb/releases/download/v0.2/fuckdb_linux.tar.gz
-  ```
+ ```
+  
 - windows 
   download the windows file in release
 - 首先, 执行`fuckdb generate` 生成`fuckdb.json`, 编辑 fuckdb.json ，填写你的MySQL信息
+
 ```
 {
   "db": {
@@ -69,6 +74,7 @@ curl https://github.com/hantmac/fuckdb/releases/download/v0.2/fuckdb_linux.tar.g
   }
 }
 ```
+
 -  执行 `fuckdb go` 即可得到代码
 
 
