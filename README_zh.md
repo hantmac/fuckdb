@@ -39,9 +39,20 @@ type InsInfo struct {
 
 上面的GIF展示了增加了缓存功能的版本，记忆你之前填写过的数据库信息，省去了大量重复的操作，你不用再填写繁琐的数据库名，表名，等等，只需一键，就可以得到对应的代码，是不是很方便啊。ps:目前数据库信息没有做加密，所以不方便放到公网上使用，仅限于内网，后面会进行相应的开发支持。目前这个工具在我们组内已经开始使用，反馈比较好，节省了很多重复的工作，尤其是在开发的时候用到同一个库的多张表，很快就可以完成数据库表->strcut的映射。
 
-### fuckdb CMD
-If you don't want to use the web UI, you have a more fast way to generate struct - fuckdb cmd.
-- 首先, 编辑 fuckdb.json 在`./fuckdb/cmd`  中，填写你的MySQL信息
+### fuckdb Lite
+
+#### install
+- macos 
+  ```
+  brew tap hantmac/tap && brew install fuckdb
+  ```
+- Linux 
+  ```
+curl https://github.com/hantmac/fuckdb/releases/download/v0.2/fuckdb_linux.tar.gz
+  ```
+- windows 
+  download the windows file in release
+- 首先, 执行`fuckdb generate` 生成`fuckdb.json`, 编辑 fuckdb.json ，填写你的MySQL信息
 ```
 {
   "db": {
@@ -58,11 +69,7 @@ If you don't want to use the web UI, you have a more fast way to generate struct
   }
 }
 ```
-- `go run  fuckdb_cmd.gom` then copy your code and enjoy it.
-
-在 `./fuckdb/cmd` 下面可以找到对应操作系统的可执行文件
-
-ps: 务必保证存储数据库信息的json文件和可执行文件在同一目录下。
+-  执行 `fuckdb go` 即可得到代码
 
 
 欢迎试用&反馈&Contribute。代码地址：https://github.com/hantmac/fuckdb

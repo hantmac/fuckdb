@@ -30,9 +30,20 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 - Boom！Enjoy your coffee and copy your struct code.
 ![](https://tva1.sinaimg.cn/large/006tNbRwly1g9w531osobj31u90u0jzq.jpg)
 
-### fuckdb CMD
-If you don't want to use the web UI, you have a more fast way to generate struct - fuckdb cmd.
-- First, edit the fuckdb.json in `./fuckdb/cmd`  to add your mysql info
+### fuckdb Lite
+#### install
+- macos 
+  ```
+  brew tap hantmac/tap && brew install fuckdb
+  ```
+- Linux 
+  ```
+curl https://github.com/hantmac/fuckdb/releases/download/v0.2/fuckdb_linux.tar.gz
+  ```
+- windows 
+  download the windows file in release
+
+- First,  run `fuckdb generate` to generate `fuckdb.json` add your mysql info
 ```
 {
   "db": {
@@ -49,11 +60,8 @@ If you don't want to use the web UI, you have a more fast way to generate struct
   }
 }
 ```
-- `go run  fuckdb_cmd.gom` then copy your code and enjoy it.
+- then run `fuckdb go` and get your code!
 
-In `fuckdb/cmd` you can find exec file for different os.
-
-ps: Make sure the json file and cmd file in the same dir.
 
 ### Support
 
