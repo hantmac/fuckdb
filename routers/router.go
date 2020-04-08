@@ -3,8 +3,9 @@ package routers
 import (
 	"fuckdb/routers/middleware"
 	"fuckdb/services"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
@@ -26,6 +27,7 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		db2s.POST("/download", DownloadStructFile)
 		db2s.GET("/sql_str", services.FormatMysql)
 		db2s.GET("struct_sql", services.FromStructToSql)
+		db2s.POST("/db2view", DbToView)
 	}
 	return g
 }

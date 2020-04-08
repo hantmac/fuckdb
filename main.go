@@ -13,12 +13,16 @@ import (
 	"os/signal"
 	"time"
 
+	_ "fuckdb/view/csv"
+	_ "fuckdb/view/json"
+	_ "fuckdb/view/md"
+	_ "fuckdb/view/txt"
+
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/lexkong/log"
 	"github.com/spf13/viper"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {

@@ -1,8 +1,9 @@
 package services
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // @Summary for health check

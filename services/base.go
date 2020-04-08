@@ -2,9 +2,10 @@ package services
 
 import (
 	"errors"
+	"runtime/debug"
+
 	"github.com/gin-gonic/gin"
 	"github.com/lexkong/log"
-	"runtime/debug"
 )
 
 type Response struct {
@@ -19,7 +20,7 @@ type ListResponse struct {
 	Total int `json:"total"`
 }
 
-//封装错误处理，避免冗余
+// HandleError 封装错误处理，避免冗余
 func HandleError(statusCode int, c *gin.Context, err error) {
 	log.Error("handle error:", err)
 	c.Error(errors.New(string(debug.Stack())))

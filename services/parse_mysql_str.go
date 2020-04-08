@@ -1,12 +1,12 @@
 package services
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"net/http"
 
-import "github.com/gin-gonic/gin"
-
-import "log"
-
-import "net/http"
+	"github.com/gin-gonic/gin"
+)
 
 // MysqlInfo is mysql的元数据信息
 type MysqlInfo struct {

@@ -4,23 +4,25 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"fuckdb/bases/model"
 	"sort"
-	"strconv"
 	"strings"
 )
 
-// GetColumnsFromMysqlTable Select column details from information schema and return map of map
-func GetColumnsFromMysqlTable(mariadbUser string, mariadbPassword string, mariadbHost string, mariadbPort int, mariadbDatabase string, mariadbTable string) (*map[string]map[string]string, error) {
-
-	var err error
-	var db *sql.DB
-	if mariadbPassword != "" {
-		db, err = sql.Open("mysql", mariadbUser+":"+mariadbPassword+"@tcp("+mariadbHost+":"+strconv.Itoa(mariadbPort)+")/"+mariadbDatabase+"?&parseTime=True")
-	} else {
-		db, err = sql.Open("mysql", mariadbUser+"@tcp("+mariadbHost+":"+strconv.Itoa(mariadbPort)+")/"+mariadbDatabase+"?&parseTime=True")
-	}
-
+// newDB connect mysql
+func newDB(c *model.MysqlConfig) (db *sql.DB, err error) {
+	db, err = sql.Open("mysql", model.GenDataSource(c, "charset=utf8mb4&parseTime=true&loc=Local"))
 	// Check for error in db, note this does not check connectivity but does check uri
+	if err != nil {
+		fmt.Println("Error opening mysql db: " + err.Error())
+		return
+	}
+	return
+}
+
+// GetColumnsFromMysqlTable Select column details from information schema and return map of map
+func GetColumnsFromMysqlTable(c *model.MysqlConfig) (*map[string]map[string]string, error) {
+	db, err := newDB(c)
 	if err != nil {
 		fmt.Println("Error opening mysql db: " + err.Error())
 		return nil, err
@@ -31,13 +33,13 @@ func GetColumnsFromMysqlTable(mariadbUser string, mariadbPassword string, mariad
 	// Store colum as map of maps
 	columnDataTypes := make(map[string]map[string]string)
 	// Select columnd data from INFORMATION_SCHEMA
-	columnDataTypeQuery := "SELECT COLUMN_NAME, COLUMN_KEY, DATA_TYPE, IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ? AND table_name = ?"
+	columnDataTypeQuery := "SELECT COLUMN_NAME, COLUMN_KEY, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT, COLUMN_COMMENT, CHARACTER_SET_NAME, COLLATION_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?"
 
 	if Debug {
 		fmt.Println("running: " + columnDataTypeQuery)
 	}
 
-	rows, err := db.Query(columnDataTypeQuery, mariadbDatabase, mariadbTable)
+	rows, err := db.Query(columnDataTypeQuery, c.DB, c.Table)
 
 	if err != nil {
 		fmt.Println("Error selecting from db: " + err.Error())
@@ -54,9 +56,23 @@ func GetColumnsFromMysqlTable(mariadbUser string, mariadbPassword string, mariad
 		var columnKey string
 		var dataType string
 		var nullable string
-		rows.Scan(&column, &columnKey, &dataType, &nullable)
+		var defaultVal string
+		var comment string
+		var charSet string
+		var collection string
 
-		columnDataTypes[column] = map[string]string{"value": dataType, "nullable": nullable, "primary": columnKey}
+		rows.Scan(&column, &columnKey, &dataType, &nullable, &defaultVal, &comment, &charSet, &collection)
+
+		columnDataTypes[column] = map[string]string{
+			"name":       column,
+			"value":      dataType,
+			"nullable":   nullable,
+			"primary":    columnKey,
+			"default":    defaultVal,
+			"charset":    charSet,
+			"collection": collection,
+			"comment":    comment,
+		}
 	}
 
 	return &columnDataTypes, err
