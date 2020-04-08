@@ -4,10 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"fuckdb/bases"
+	"fuckdb/bases/model"
 	"fuckdb/services"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/lexkong/log"
-	"net/http"
 )
 
 type MysqlInfoReqData struct {
@@ -19,8 +21,8 @@ type MysqlInfoReqData struct {
 	MysqlUser       string `json:"mysql_user"`
 	PackageName     string `json:"package_name"`
 	StructName      string `json:"struct_name"`
-	XmlAnnotation   bool   `json:"xml_annotation"`
-	JsonAnnotation  bool   `json:"json_annotation"`
+	XMLAnnotation   bool   `json:"xml_annotation"`
+	JSONAnnotation  bool   `json:"json_annotation"`
 	GormAnnotation  bool   `json:"gorm_annotation"`
 	XormAnnotation  bool   `json:"xorm_annotation"`
 	FakerAnnotation bool   `json:"faker_annotation"`
@@ -43,8 +45,17 @@ func DbToGoStruct(c *gin.Context) {
 	if mysqlInfo.MysqlPort == 0 {
 		mysqlInfo.MysqlPort = 3306
 	}
-	columnDataTypes, err := bases.GetColumnsFromMysqlTable(mysqlInfo.MysqlUser, mysqlInfo.MysqlPasswd,
-		mysqlInfo.MysqlHost, mysqlInfo.MysqlPort, mysqlInfo.MysqlDB, mysqlInfo.MysqlTable)
+
+	mysqlConfig := &model.MysqlConfig{
+		Host:     mysqlInfo.MysqlHost,
+		Port:     mysqlInfo.MysqlPort,
+		Socket:   "",
+		Username: mysqlInfo.MysqlUser,
+		Password: mysqlInfo.MysqlPasswd,
+		DB:       mysqlInfo.MysqlDB,
+		Table:    mysqlInfo.MysqlTable,
+	}
+	columnDataTypes, err := bases.GetColumnsFromMysqlTable(mysqlConfig)
 	if err != nil {
 		fmt.Println("Error in selecting column data information from mysql information schema")
 		services.HandleError(http.StatusInternalServerError, c, err)
@@ -59,8 +70,8 @@ func DbToGoStruct(c *gin.Context) {
 	}
 
 	structInfo, err := bases.Generate(*columnDataTypes, mysqlInfo.MysqlTable, mysqlInfo.StructName,
-		mysqlInfo.PackageName, mysqlInfo.JsonAnnotation, mysqlInfo.GormAnnotation,
-		mysqlInfo.XmlAnnotation, mysqlInfo.XormAnnotation, mysqlInfo.FakerAnnotation, mysqlInfo.GureGuTypes)
+		mysqlInfo.PackageName, mysqlInfo.JSONAnnotation, mysqlInfo.GormAnnotation,
+		mysqlInfo.XMLAnnotation, mysqlInfo.XormAnnotation, mysqlInfo.FakerAnnotation, mysqlInfo.GureGuTypes)
 
 	if err != nil {
 		fmt.Println("Error in creating struct from json: " + err.Error())

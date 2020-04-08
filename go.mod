@@ -17,10 +17,12 @@ require (
 	github.com/liudanking/goutil v0.0.0-20190930035630-6830c8a1be22 // indirect
 	github.com/mitchellh/mapstructure v1.2.2 // indirect
 	github.com/nsf/gocode v0.0.0-20190302080247-5bee97b48836 // indirect
+	github.com/olekukonko/tablewriter v0.0.4
 	github.com/onsi/ginkgo v1.11.0 // indirect
 	github.com/onsi/gomega v1.8.1 // indirect
 	github.com/pelletier/go-toml v1.7.0 // indirect
 	github.com/pinzolo/casee v0.0.0-20191019093852-17765ba5eb57
+	github.com/smartystreets/goconvey v1.6.4
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	github.com/spf13/cobra v0.0.7
