@@ -96,43 +96,14 @@
 
         <el-row>
           <el-col :span="8">
-            <el-form-item prop="package_name" label="package_name">
-              <el-input v-model="form.package_name" clearable></el-input>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="8">
-            <el-form-item prop="struct_name" label="struct_name">
-              <el-input v-model="form.struct_name" clearable></el-input>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="8">
-            <el-form-item label="json_annotation">
-              <el-radio-group v-model="form.json_annotation">
-                <el-radio label="true"></el-radio>
-                <el-radio label="false"></el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="xml_annotation">
-              <el-radio-group v-model="form.xml_annotation">
-                <el-radio label="true"></el-radio>
-                <el-radio label="false"></el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="8">
-            <el-form-item label="gorm_annotation">
-              <el-radio-group v-model="form.gorm_annotation">
-                <el-radio label="true"></el-radio>
-                <el-radio label="false"></el-radio>
-              </el-radio-group>
+            <el-form-item label="请选择输出格式">
+              <select v-model="form.view_type">
+                <option disabled value="">请选择</option>
+                <option value="md">markdown</option>
+                <option value="json">json</option>
+                <option value="txt">txt</option>
+                <option value="csv">csv</option>
+              </select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -157,12 +128,6 @@
       </div>
     </div>
 
-    <!-- <div class="m-tool" v-show="tabName == 'FuckDb'">
-      <router-link :to="{path:'/'}">FuckDb</router-link>
-    </div>
-    <div class="m-tool" v-show="tabName == 'dump'">
-      <router-link :to="{path:'dump'}">dump</router-link>
-    </div> -->
     <div class="m-tool" v-show="tabName == 'json-to-go'">
       <iframe src="https://mholt.github.io/json-to-go/" frameborder="0"></iframe>
     </div>
@@ -205,7 +170,6 @@ import service from "../config/api";
 import API from "../config/index";
 import Editor from "vue2x-ace-editor";
 
-
 export default {
   name: "home",
   components: {
@@ -235,11 +199,7 @@ type testDB struct {
         mysql_table: "",
         mysql_passwd: "",
         mysql_user: "",
-        package_name: "",
-        struct_name: "",
-        json_annotation: "true",
-        xml_annotation: "false",
-        gorm_annotation: "true"
+        view_type:"md",
       },
       rules: {
         mysql_host: [
@@ -257,11 +217,8 @@ type testDB struct {
         mysql_user: [
           { required: true, message: "mysql_user is empty", trigger: "blur" }
         ],
-        package_name: [
-          { required: true, message: "package_name is empty", trigger: "blur" }
-        ],
-        struct_name: [
-          { required: true, message: "struct_name is empty", trigger: "blur" }
+        view_type: [
+          { required: true, message: "view_type is empty", trigger: "blur" }
         ],
         mysql_port: [
           {
@@ -299,7 +256,7 @@ type testDB struct {
         }
       ]);
     },
-    GetDb2struct() {
+    GetDb2view() {
       let data = {
         mysql_host: this.form.mysql_host,
         mysql_port: this.form.mysql_port,
@@ -307,15 +264,11 @@ type testDB struct {
         mysql_table: this.form.mysql_table,
         mysql_passwd: this.form.mysql_passwd,
         mysql_user: this.form.mysql_user,
-        package_name: this.form.package_name,
-        struct_name: this.form.struct_name,
-        json_annotation: this.form.json_annotation === "true" ? true : false,
-        xml_annotation: this.form.xml_annotation === "true" ? true : false,
-        gorm_annotation: this.form.gorm_annotation === "true" ? true : false
+        view_type:this.form.view_type
       };
 
       service({
-        url: `${API.APIdb2struct}/api/db2struct`,
+        url: `${API.APIdb2struct}/api/db2view`,
         method: "post",
         data
       })
@@ -338,7 +291,7 @@ type testDB struct {
         });
     },
     setFuckDbList(data) {
-      let FuckDbList = window.localStorage.getItem("FuckDb_List");
+      let FuckDbList = window.localStorage.getItem("FuckDb_dump");
       if (FuckDbList) {
         FuckDbList = JSON.parse(FuckDbList);
         let FuckDbListDistinguish = false;
@@ -351,18 +304,16 @@ type testDB struct {
             FuckDbListDistinguish = true;
             obj.mysql_db = data.mysql_db;
             obj.mysql_table = data.mysql_table;
-            obj.package_name = obj.package_name;
-            obj.struct_name = obj.struct_name;
           }
         });
 
         if (!FuckDbListDistinguish) {
           FuckDbList.push(data);
         }
-        window.localStorage.setItem("FuckDb_List", JSON.stringify(FuckDbList));
+        window.localStorage.setItem("FuckDb_dump", JSON.stringify(FuckDbList));
       } else {
         FuckDbList = [data];
-        window.localStorage.setItem("FuckDb_List", JSON.stringify([data]));
+        window.localStorage.setItem("FuckDb_dump", JSON.stringify([data]));
       }
       this.optionsDBLog = [];
       FuckDbList.forEach((obj, index) => {
@@ -380,7 +331,7 @@ type testDB struct {
       this.FuckDbList = FuckDbList;
     },
     setFuckDbChangeDBList() {
-      let FuckDbList = window.localStorage.getItem("FuckDb_List");
+      let FuckDbList = window.localStorage.getItem("FuckDb_dump");
       if (FuckDbList) {
         FuckDbList = JSON.parse(FuckDbList);
         this.FuckDbList = FuckDbList;
@@ -407,11 +358,7 @@ type testDB struct {
         mysql_table: "",
         mysql_passwd: "",
         mysql_user: "",
-        package_name: "",
-        struct_name: "",
-        json_annotation: "true",
-        xml_annotation: "true",
-        gorm_annotation: "true"
+        view_type:""
       };
     },
     cleanDb() {
@@ -426,19 +373,15 @@ type testDB struct {
         mysql_table: "",
         mysql_passwd: "",
         mysql_user: "",
-        package_name: "",
-        struct_name: "",
-        json_annotation: "true",
-        xml_annotation: "true",
-        gorm_annotation: "true"
+        view_type:""
       };
 
-      window.localStorage.setItem("FuckDb_List", "");
+      window.localStorage.setItem("FuckDb_dump", "");
     },
     onSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.GetDb2struct();
+          this.GetDb2view();
         } else {
           console.log("error submit!!");
           return false;
@@ -452,7 +395,7 @@ type testDB struct {
       this.setFuckDbChangeDBList();
     },
     handleCommand(command) {
-      if (command === "FuckDb" || command === "dump") {
+      if (command === "FuckDb" || command==="dump") {
         document.getElementById("app").style.overflowY = "auto";
       } else {
         document.getElementById("app").style.overflowY = "hidden";
