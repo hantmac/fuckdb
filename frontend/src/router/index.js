@@ -15,6 +15,9 @@ export default new Router({
       path: '/dump',
       name: 'dump',
       component: dump
+    },{
+      path:'*',
+      redirect:'/'
     }
   ]
 })

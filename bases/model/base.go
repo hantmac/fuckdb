@@ -117,7 +117,7 @@ type schema struct {
 
 // getSchemas by schema_name
 func (repo *Repo) getSchemas(cond *schema) (items []schema, err error) {
-	query := "SELECT DEFAULT_CHARACTER_SET_NAME,DEFAULT_COLLATION_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ? "
+	query := "SELECT DEFAULT_CHARACTER_SET_NAME,DEFAULT_COLLATION_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = (?) "
 
 	rows, err := repo.db.Query(query, cond.Name)
 
@@ -156,7 +156,7 @@ type table struct {
 
 // getTables by table_schema
 func (repo *Repo) getTables(cond *table) (items []table, err error) {
-	query := "SELECT TABLE_SCHEMA, TABLE_NAME, TABLE_COLLATION, TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?"
+	query := "SELECT TABLE_SCHEMA, TABLE_NAME, TABLE_COLLATION, TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = (?) AND TABLE_NAME = (?)"
 
 	rows, err := repo.db.Query(query, cond.Schema, cond.Name)
 
@@ -203,7 +203,7 @@ type column struct {
 }
 
 func (repo *Repo) getColumns(cond *column) (items []column, err error) {
-	query := "SELECT COLUMN_NAME, COLUMN_KEY, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT, COLUMN_COMMENT, CHARACTER_SET_NAME, COLLATION_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?"
+	query := "SELECT COLUMN_NAME, COLUMN_KEY, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT, COLUMN_COMMENT, CHARACTER_SET_NAME, COLLATION_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = (?) AND TABLE_NAME = (?)"
 
 	rows, err := repo.db.Query(query, cond.Schema, cond.Table)
 
@@ -366,7 +366,7 @@ func (repo *Repo) GetColumns(cond *Column) (items []Column, err error) {
 
 // GetCreateTableSQL by table_name
 func (repo *Repo) GetCreateTableSQL(tableName string) (sql string, err error) {
-	query := "SHOW CREATE TABLE " + tableName
+	query := "SHOW CREATE TABLE `" + tableName + "`"
 	rows, err := repo.db.Query(query)
 
 	if err != nil {

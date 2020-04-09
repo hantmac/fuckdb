@@ -64,7 +64,11 @@ func DbToView(c *gin.Context) {
 	}
 
 	dbs, err := bases.GetMetadata(repo, mysqlInfo.MysqlDB, mysqlInfo.MysqlTable)
-
+	if err != nil {
+		fmt.Println("Error in get meta data")
+		services.HandleError(http.StatusInternalServerError, c, err)
+		return
+	}
 	// Output as target viewer
 	v := view.SelectViewer(mysqlInfo.ViewType)
 	if v == nil {
