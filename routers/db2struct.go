@@ -55,23 +55,18 @@ func DbToGoStruct(c *gin.Context) {
 		DB:       mysqlInfo.MysqlDB,
 		Table:    mysqlInfo.MysqlTable,
 	}
-	columnDataTypes, err := bases.GetColumnsFromMysqlTable(mysqlConfig)
+
+	repo, err := model.NewRepo(mysqlConfig)
 	if err != nil {
-		fmt.Println("Error in selecting column data information from mysql information schema")
+		fmt.Println("Error in create new repo")
 		services.HandleError(http.StatusInternalServerError, c, err)
 		return
 	}
 
-	if mysqlInfo.StructName == "" {
-		mysqlInfo.StructName = "MyNewStruct"
-	}
-	if mysqlInfo.PackageName == "" {
-		mysqlInfo.PackageName = "my_new_package"
-	}
-
-	structInfo, err := bases.Generate(*columnDataTypes, mysqlInfo.MysqlTable, mysqlInfo.StructName,
+	structInfo, err := bases.GenStructInfo(repo, mysqlInfo.MysqlDB, mysqlInfo.MysqlTable, mysqlInfo.StructName,
 		mysqlInfo.PackageName, mysqlInfo.JSONAnnotation, mysqlInfo.GormAnnotation,
-		mysqlInfo.XMLAnnotation, mysqlInfo.XormAnnotation, mysqlInfo.FakerAnnotation, mysqlInfo.GureGuTypes)
+		mysqlInfo.XMLAnnotation, mysqlInfo.XormAnnotation, mysqlInfo.FakerAnnotation,
+		mysqlInfo.GureGuTypes)
 
 	if err != nil {
 		fmt.Println("Error in creating struct from json: " + err.Error())

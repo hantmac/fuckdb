@@ -61,7 +61,7 @@ func DbToView(c *gin.Context) {
 		services.HandleError(http.StatusInternalServerError, c, err)
 		return
 	}
-	repo.GetCreateTableSQL(mysqlInfo.MysqlTable)
+
 	dbs, err := bases.GetMetadata(repo, mysqlInfo.MysqlDB, mysqlInfo.MysqlTable)
 
 	// Output as target viewer

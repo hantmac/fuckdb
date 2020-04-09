@@ -1,125 +1,45 @@
 package bases
 
 import (
-	"database/sql"
-	"errors"
 	"fmt"
 	"fuckdb/bases/model"
-	"sort"
 	"strings"
 )
 
-// newDB connect mysql
-func newDB(c *model.MysqlConfig) (db *sql.DB, err error) {
-	db, err = sql.Open("mysql", model.GenDataSource(c, "charset=utf8mb4&parseTime=true&loc=Local"))
-	// Check for error in db, note this does not check connectivity but does check uri
-	if err != nil {
-		fmt.Println("Error opening mysql db: " + err.Error())
-		return
-	}
-	return
-}
-
-// GetColumnsFromMysqlTable Select column details from information schema and return map of map
-func GetColumnsFromMysqlTable(c *model.MysqlConfig) (*map[string]map[string]string, error) {
-	db, err := newDB(c)
-	if err != nil {
-		fmt.Println("Error opening mysql db: " + err.Error())
-		return nil, err
-	}
-
-	defer db.Close()
-
-	// Store colum as map of maps
-	columnDataTypes := make(map[string]map[string]string)
-	// Select columnd data from INFORMATION_SCHEMA
-	columnDataTypeQuery := "SELECT COLUMN_NAME, COLUMN_KEY, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT, COLUMN_COMMENT, CHARACTER_SET_NAME, COLLATION_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?"
-
-	if Debug {
-		fmt.Println("running: " + columnDataTypeQuery)
-	}
-
-	rows, err := db.Query(columnDataTypeQuery, c.DB, c.Table)
-
-	if err != nil {
-		fmt.Println("Error selecting from db: " + err.Error())
-		return nil, err
-	}
-	if rows != nil {
-		defer rows.Close()
-	} else {
-		return nil, errors.New("No results returned for table ")
-	}
-
-	for rows.Next() {
-		var column string
-		var columnKey string
-		var dataType string
-		var nullable string
-		var defaultVal string
-		var comment string
-		var charSet string
-		var collection string
-
-		rows.Scan(&column, &columnKey, &dataType, &nullable, &defaultVal, &comment, &charSet, &collection)
-
-		columnDataTypes[column] = map[string]string{
-			"name":       column,
-			"value":      dataType,
-			"nullable":   nullable,
-			"primary":    columnKey,
-			"default":    defaultVal,
-			"charset":    charSet,
-			"collection": collection,
-			"comment":    comment,
-		}
-	}
-
-	return &columnDataTypes, err
-}
-
-// Generate go struct entries for a map[string]interface{} structure
-func generateMysqlTypes(obj map[string]map[string]string, depth int, jsonAnnotation bool, gormAnnotation bool, xmlAnnotation bool, xormAnnotation bool, fakerAnnotation bool, gureguTypes bool) string {
+func generateColumnTypes(columns []model.Column, depth int, jsonAnnotation bool, gormAnnotation bool, xmlAnnotation bool, xormAnnotation bool, fakerAnnotation bool, gureguTypes bool) string {
 	structure := "struct {"
-
-	keys := make([]string, 0, len(obj))
-	for key := range obj {
-		keys = append(keys, key)
-	}
-	sort.Strings(keys)
-
-	for _, key := range keys {
-		mysqlType := obj[key]
+	for _, column := range columns {
+		// mysqlType := column.Name
 		nullAble := false
-		if mysqlType["nullable"] == "YES" {
+		if column.Nullable == "YES" {
 			nullAble = true
 		}
 
 		primary := ""
-		if mysqlType["primary"] == "PRI" {
+		if column.Key == "PRI" {
 			primary = ";primary_key"
 		}
 
 		// Get the corresponding go value type for this mysql type
-		valueType := mysqlTypeToGoType(mysqlType["value"], nullAble, gureguTypes)
+		valueType := mysqlTypeToGoType(column.DataType, nullAble, gureguTypes)
 
-		fieldName := fmtFieldName(stringifyFirstChar(key))
+		fieldName := fmtFieldName(stringifyFirstChar(column.Name))
 		var annotations []string
 		if gormAnnotation {
-			annotations = append(annotations, fmt.Sprintf("gorm:\"column:%s%s\"", key, primary))
+			annotations = append(annotations, fmt.Sprintf("gorm:\"column:%s%s\"", column.Name, primary))
 		}
 		if jsonAnnotation {
-			annotations = append(annotations, fmt.Sprintf("json:\"%s\"", key))
+			annotations = append(annotations, fmt.Sprintf("json:\"%s\"", column.Name))
 		}
 
 		if xmlAnnotation {
-			annotations = append(annotations, fmt.Sprintf("xml:\"%s\"", key))
+			annotations = append(annotations, fmt.Sprintf("xml:\"%s\"", column.Name))
 		}
 		if xormAnnotation {
-			annotations = append(annotations, fmt.Sprintf("xorm:\"%s%s\"", key, primary))
+			annotations = append(annotations, fmt.Sprintf("xorm:\"%s%s\"", column.Name, primary))
 		}
 		if fakerAnnotation {
-			annotations = append(annotations, fmt.Sprintf("faker:\"%s\"", key))
+			annotations = append(annotations, fmt.Sprintf("faker:\"%s\"", column.Name))
 		}
 		if len(annotations) > 0 {
 			structure += fmt.Sprintf("\n%s %s `%s`",
