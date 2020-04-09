@@ -79,12 +79,21 @@ var intToWordMap = []string{
 //Debug level logging
 var Debug = false
 
-// Generate Given a Column map with datatypes and a name structName,
-// attempts to generate a struct definition
-func Generate(columnTypes map[string]map[string]string, tableName string, structName string, pkgName string,
+// GenStructInfo attempts to generate a struct definition
+func GenStructInfo(repo model.IRepo, dbName string, tableName string, structName string, pkgName string,
 	jsonAnnotation bool, gormAnnotation bool, xmlAnnotation bool, xormAnnotation bool, fakerAnnotation bool, gureguTypes bool) ([]byte, error) {
-	dbTypes := generateMysqlTypes(columnTypes, 0, jsonAnnotation, gormAnnotation, xmlAnnotation, xormAnnotation, fakerAnnotation, gureguTypes)
 
+	column := &model.Column{
+		DB:    dbName,
+		Table: tableName,
+	}
+	columns, err := repo.GetColumns(column)
+
+	if err != nil {
+		fmt.Println("Error get columns meta data: " + err.Error())
+		return nil, err
+	}
+	dbTypes := generateColumnTypes(columns, 0, jsonAnnotation, gormAnnotation, xmlAnnotation, xormAnnotation, fakerAnnotation, gureguTypes)
 	src := fmt.Sprintf("package %s\ntype %s %s}",
 		pkgName,
 		structName,
