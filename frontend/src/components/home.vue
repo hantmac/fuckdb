@@ -9,14 +9,14 @@
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="FuckDb">
+            <el-dropdown-item command="FuckDb" icon="el-icon-price-tag">
               <router-link :to="{path:'/'}">FuckDb</router-link>
             </el-dropdown-item>
-            <el-dropdown-item command="dump">
+            <el-dropdown-item command="dump" icon="el-icon-view">
               <router-link :to="{path:'dump'}">dump</router-link>
             </el-dropdown-item>
-            <el-dropdown-item command="json-to-go">json-to-go</el-dropdown-item>
-            <el-dropdown-item command="yaml-to-json">yaml-to-json</el-dropdown-item>
+            <el-dropdown-item command="json-to-go" icon="el-icon-s-tools">json-to-go</el-dropdown-item>
+            <el-dropdown-item command="yaml-to-json" icon="el-icon-s-tools">yaml-to-json</el-dropdown-item>
             <!-- <el-dropdown-item command="struct-to-sql">struct-to-sql</el-dropdown-item> -->
           </el-dropdown-menu>
         </el-dropdown>
@@ -207,6 +207,7 @@ import Editor from "vue2x-ace-editor";
 
 
 export default {
+  inject:['reload'],
   name: "home",
   components: {
     Editor
@@ -453,6 +454,7 @@ type testDB struct {
     },
     handleCommand(command) {
       if (command === "FuckDb" || command === "dump") {
+        this.reload()
         document.getElementById("app").style.overflowY = "auto";
       } else {
         document.getElementById("app").style.overflowY = "hidden";
