@@ -97,14 +97,14 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="请选择输出格式">
-              <select v-model="form.view_type">
-                <option disabled value="">请选择</option>
-                <option value="md">markdown</option>
-                <option value="json">json</option>
-                <option value="txt">txt</option>
-                <option value="csv">csv</option>
-              </select>
-            </el-form-item>
+              <el-select v-model="form.view_type" placeholder="请选择">
+                <el-option
+                  v-for="item in viewOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
           </el-col>
         </el-row>
 
@@ -232,6 +232,21 @@ type testDB struct {
       },
       optionsDBLog: [],
       FuckDbList: [],
+      viewOptions: [
+        {
+          value: 'md',
+          label: 'markdown'
+        }, {
+          value: 'json',
+          label: 'json'
+        }, {
+          value: 'txt',
+          label: 'txt'
+        },{
+          value: 'csv',
+          label: 'csv'
+        }
+      ],
       value: ""
     };
   },
