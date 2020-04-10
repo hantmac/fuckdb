@@ -120,14 +120,13 @@ func (repo *Repo) getSchemas(cond *schema) (items []schema, err error) {
 	query := "SELECT DEFAULT_CHARACTER_SET_NAME,DEFAULT_COLLATION_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = (?) "
 
 	rows, err := repo.db.Query(query, cond.Name)
+	defer rows.Close()
 
 	if err != nil {
 		fmt.Println("Error selecting from schema: " + err.Error())
 		return nil, err
 	}
-	if rows != nil {
-		defer rows.Close()
-	} else {
+	if rows == nil {
 		return nil, errors.New("No results returned for Schema ")
 	}
 
@@ -159,14 +158,13 @@ func (repo *Repo) getTables(cond *table) (items []table, err error) {
 	query := "SELECT TABLE_SCHEMA, TABLE_NAME, TABLE_COLLATION, TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = (?) AND TABLE_NAME = (?)"
 
 	rows, err := repo.db.Query(query, cond.Schema, cond.Name)
+	defer rows.Close()
 
 	if err != nil {
 		fmt.Println("Error selecting from Tables: " + err.Error())
 		return nil, err
 	}
-	if rows != nil {
-		defer rows.Close()
-	} else {
+	if rows == nil {
 		return nil, errors.New("No results returned for Tables ")
 	}
 
@@ -206,14 +204,14 @@ func (repo *Repo) getColumns(cond *column) (items []column, err error) {
 	query := "SELECT COLUMN_NAME, COLUMN_KEY, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT, COLUMN_COMMENT, CHARACTER_SET_NAME, COLLATION_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = (?) AND TABLE_NAME = (?)"
 
 	rows, err := repo.db.Query(query, cond.Schema, cond.Table)
+	defer rows.Close()
 
 	if err != nil {
 		fmt.Println("Error selecting from db: " + err.Error())
 		return nil, err
 	}
-	if rows != nil {
-		defer rows.Close()
-	} else {
+
+	if rows == nil {
 		return nil, errors.New("No results returned for table ")
 	}
 
@@ -245,7 +243,7 @@ func (repo *Repo) getColumns(cond *column) (items []column, err error) {
 	}
 
 	// fmt.Println("Column==================")
-	// fmt.Println(items)
+	// fmt.Printf("%#v", items)
 	return items, nil
 }
 
@@ -368,14 +366,14 @@ func (repo *Repo) GetColumns(cond *Column) (items []Column, err error) {
 func (repo *Repo) GetCreateTableSQL(tableName string) (sql string, err error) {
 	query := "SHOW CREATE TABLE `" + tableName + "`"
 	rows, err := repo.db.Query(query)
+	defer rows.Close()
 
 	if err != nil {
 		fmt.Println("Error show create table sql: " + err.Error())
 		return
 	}
-	if rows != nil {
-		defer rows.Close()
-	} else {
+
+	if rows == nil {
 		return "", errors.New("No results returned for Tables ")
 	}
 
