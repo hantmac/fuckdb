@@ -1,168 +1,14 @@
 <template>
   <div class="m-doc">
-    <div class="m-header">
-      <div class="f-tit">
-        <h3 class="f-fl">FuckDb</h3>
-        <el-dropdown class="f-fl m-dropdown" @command="handleCommand">
-          <span class="el-dropdown-link">
-            Navigation
-            <i class="el-icon-arrow-down el-icon--right"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="FuckDb" icon="el-icon-price-tag">
-              <router-link :to="{path:'/'}">FuckDb</router-link>
-            </el-dropdown-item>
-            <el-dropdown-item command="dump" icon="el-icon-view">
-              <router-link :to="{path:'dump'}">dump</router-link>
-            </el-dropdown-item>
-            <el-dropdown-item command="json-to-go" icon="el-icon-s-tools">json-to-go</el-dropdown-item>
-            <el-dropdown-item command="yaml-to-json" icon="el-icon-s-tools">yaml-to-json</el-dropdown-item>
-            <!-- <el-dropdown-item command="struct-to-sql">struct-to-sql</el-dropdown-item> -->
-          </el-dropdown-menu>
-        </el-dropdown>
-        <iframe
-          style="margin-left: 15px; margin-bottom:-7px;"
-          frameborder="0"
-          scrolling="0"
-          width="91px"
-          height="20px"
-          src="https://ghbtns.com/github-btn.html?user=hantmac&repo=fuckdb&type=star&count=true"
-        ></iframe>
-      </div>
-    </div>
-
+    <HeaderNav @tabName="handleCommand"></HeaderNav>
     <div class="m-fuckDb" v-show="tabName == 'FuckDb'">
-      <el-form ref="form" :model="form" :rules="rules" label-width="130px" size="medium">
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="Change DB">
-              <el-select
-                v-model="value"
-                placeholder="select DB"
-                @change="changeDBList"
-                clearable
-                @clear="clearDBList"
-              >
-                <el-option
-                  v-for="item in optionsDBLog"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-              <el-button @click="cleanDb">Clear</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item prop="mysql_host" label="mysql_host">
-              <el-input v-model="form.mysql_host" clearable></el-input>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="8">
-            <el-form-item prop="mysql_port" label="mysql_port">
-              <el-input v-model.number="form.mysql_port" clearable></el-input>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="8">
-            <el-form-item prop="mysql_db" label="mysql_db">
-              <el-input v-model="form.mysql_db" clearable></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="8">
-            <el-form-item prop="mysql_table" label="mysql_table">
-              <el-input v-model="form.mysql_table" clearable></el-input>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="8">
-            <el-form-item prop="mysql_passwd" label="mysql_passwd">
-              <el-input type="password" v-model="form.mysql_passwd" clearable></el-input>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="8">
-            <el-form-item prop="mysql_user" label="mysql_user">
-              <el-input v-model="form.mysql_user" clearable></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="8">
-            <el-form-item prop="package_name" label="package_name">
-              <el-input v-model="form.package_name" clearable></el-input>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="8">
-            <el-form-item prop="struct_name" label="struct_name">
-              <el-input v-model="form.struct_name" clearable></el-input>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="8">
-            <el-form-item label="json_annotation">
-              <el-radio-group v-model="form.json_annotation">
-                <el-radio label="true"></el-radio>
-                <el-radio label="false"></el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="xml_annotation">
-              <el-radio-group v-model="form.xml_annotation">
-                <el-radio label="true"></el-radio>
-                <el-radio label="false"></el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="8">
-            <el-form-item label="gorm_annotation">
-              <el-radio-group v-model="form.gorm_annotation">
-                <el-radio label="true"></el-radio>
-                <el-radio label="false"></el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-form-item>
-          <div class="f-fl">
-            <el-button type="primary" @click="onSubmit('form')">Create</el-button>
-            <el-button @click="resetForm('form')">Reset</el-button>
-          </div>
-          <div class="u-tips">
-            <p>
-              <b>声明：</b> 本工具不会记录任何用户信息，请放心使用
-            </p>
-            <p>
-              <b>Disclaimer:</b> This tool does not record any user information, please use it with confidence
-            </p>
-          </div>
-        </el-form-item>
-      </el-form>
-      <div class="m-body">
-        <highlight-code lang="golang">{{code}}</highlight-code>
-      </div>
+      <FuckDbPost @formData=GetDb2struct @cleanDb="cleanDb" :result="code"></FuckDbPost>
     </div>
 
-    <!-- <div class="m-tool" v-show="tabName == 'FuckDb'">
-      <router-link :to="{path:'/'}">FuckDb</router-link>
+    <div class="m-fuckDb" v-show="tabName == 'Dump'">
+      <DumpPost @formData=GetDb2View  @cleanDb="cleanDb" :result="code" ></DumpPost>
     </div>
-    <div class="m-tool" v-show="tabName == 'dump'">
-      <router-link :to="{path:'dump'}">dump</router-link>
-    </div> -->
+
     <div class="m-tool" v-show="tabName == 'json-to-go'">
       <iframe src="https://mholt.github.io/json-to-go/" frameborder="0"></iframe>
     </div>
@@ -204,13 +50,15 @@
 import service from "../config/api";
 import API from "../config/index";
 import Editor from "vue2x-ace-editor";
-
+import HeaderNav from "./header-nav"
+import FuckDbPost from "./fuckdb-post"
+import DumpPost from "./dump-post"
 
 export default {
-  inject:['reload'],
+  // inject:['reload'],
   name: "home",
   components: {
-    Editor
+    Editor, HeaderNav,FuckDbPost,DumpPost
   },
   data() {
     return {
@@ -300,19 +148,53 @@ type testDB struct {
         }
       ]);
     },
-    GetDb2struct() {
+    GetDb2View(form) {
       let data = {
-        mysql_host: this.form.mysql_host,
-        mysql_port: this.form.mysql_port,
-        mysql_db: this.form.mysql_db,
-        mysql_table: this.form.mysql_table,
-        mysql_passwd: this.form.mysql_passwd,
-        mysql_user: this.form.mysql_user,
-        package_name: this.form.package_name,
-        struct_name: this.form.struct_name,
-        json_annotation: this.form.json_annotation === "true" ? true : false,
-        xml_annotation: this.form.xml_annotation === "true" ? true : false,
-        gorm_annotation: this.form.gorm_annotation === "true" ? true : false
+        mysql_host: form.mysql_host,
+        mysql_port: form.mysql_port,
+        mysql_db: form.mysql_db,
+        mysql_table: form.mysql_table,
+        mysql_passwd: form.mysql_passwd,
+        mysql_user: form.mysql_user,
+        view_type:form.view_type
+      };
+
+      service({
+        url: `${API.APIdb2struct}/api/db2view`,
+        method: "post",
+        data
+      })
+        .then(res => {
+          if (res.data.status === "0") {
+            this.code = res.data.data;
+            this.setFuckDbList(form);
+          }
+        })
+        .catch(error => {
+          if (error.response.status == 500) {
+            try {
+              this.$message.error(error.response.data.error);
+            } catch (error) {
+              this.$message.error("异常错误！");
+            }
+          } else {
+            this.$message.error("异常错误！");
+          }
+        });
+    },
+    GetDb2struct(form) {
+      let data = {
+        mysql_host: form.mysql_host,
+        mysql_port: form.mysql_port,
+        mysql_db: form.mysql_db,
+        mysql_table: form.mysql_table,
+        mysql_passwd: form.mysql_passwd,
+        mysql_user: form.mysql_user,
+        package_name: form.package_name,
+        struct_name: form.struct_name,
+        json_annotation: form.json_annotation === "true" ? true : false,
+        xml_annotation: form.xml_annotation === "true" ? true : false,
+        gorm_annotation: form.gorm_annotation === "true" ? true : false
       };
 
       service({
@@ -323,7 +205,7 @@ type testDB struct {
         .then(res => {
           if (res.data.status === "0") {
             this.code = res.data.data;
-            this.setFuckDbList(this.form);
+            this.setFuckDbList(form);
           }
         })
         .catch(error => {
@@ -436,16 +318,7 @@ type testDB struct {
 
       window.localStorage.setItem("FuckDb_List", "");
     },
-    onSubmit(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          this.GetDb2struct();
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
-    },
+
     resetForm(formName) {
       this.value = "";
       this.code = "package test";
@@ -453,8 +326,8 @@ type testDB struct {
       this.setFuckDbChangeDBList();
     },
     handleCommand(command) {
-      if (command === "FuckDb" || command === "dump") {
-        this.reload()
+      if (command === "FuckDb" || command === "Dump") {
+        // this.reload()
         document.getElementById("app").style.overflowY = "auto";
       } else {
         document.getElementById("app").style.overflowY = "hidden";
@@ -466,7 +339,7 @@ type testDB struct {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped scss>
+<style scss>
 h1,
 h2 {
   font-weight: normal;
