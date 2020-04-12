@@ -108,21 +108,6 @@ export default {
   },
   data() {
     return {
-      code: "package test",
-      content: `
-//code...
-type testDB struct {
-    Status        string \`gorm:"column:Status" json:"Status" xml:"Status"\`
-}
-`,
-      tabName: "FuckDb", //"struct-to-sql"
-      codeSql: `
-      CREATE TABLE \`auto_generated\`
-      (
-        \`registration_date\` varchar(128) NOT NULL ,
-
-      ) engine=innodb DEFAULT charset=utf8mb4;
-      `,
       form: {
         mysql_host: "",
         mysql_port: 3306,
@@ -180,50 +165,13 @@ type testDB struct {
       value: ""
     };
   },
+  // updated() {
+  //   this.setFuckDbChangeDBList();
+  // },
   mounted() {
     this.setFuckDbChangeDBList();
   },
   methods: {
-    setFuckDbList(data) {
-      let FuckDbList = window.localStorage.getItem("FuckDb_List");
-      if (FuckDbList) {
-        FuckDbList = JSON.parse(FuckDbList);
-        let FuckDbListDistinguish = false;
-
-        FuckDbList.forEach(obj => {
-          if (
-            obj.mysql_user === data.mysql_user &&
-            obj.mysql_host === data.mysql_host
-          ) {
-            FuckDbListDistinguish = true;
-            obj.mysql_db = data.mysql_db;
-            obj.mysql_table = data.mysql_table;
-          }
-        });
-
-        if (!FuckDbListDistinguish) {
-          FuckDbList.push(data);
-        }
-        window.localStorage.setItem("FuckDb_List", JSON.stringify(FuckDbList));
-      } else {
-        FuckDbList = [data];
-        window.localStorage.setItem("FuckDb_List", JSON.stringify([data]));
-      }
-      this.optionsDBLog = [];
-      FuckDbList.forEach((obj, index) => {
-        this.optionsDBLog.push({
-          value: index,
-          label: `${obj.mysql_user}@${obj.mysql_host}`
-        });
-        if (
-          obj.mysql_user === data.mysql_user &&
-          obj.mysql_host === data.mysql_host
-        ) {
-          this.value = index;
-        }
-      });
-      this.FuckDbList = FuckDbList;
-    },
     setFuckDbChangeDBList() {
       let FuckDbList = window.localStorage.getItem("FuckDb_List");
       if (FuckDbList) {
@@ -244,7 +192,6 @@ type testDB struct {
       }
     },
     clearDBList() {
-      this.code = "package test";
       this.form = {
         mysql_host: "",
         mysql_port: 3306,
@@ -259,7 +206,6 @@ type testDB struct {
       this.value = "";
       this.FuckDbList = [];
       this.optionsDBLog = [];
-      this.code = "package test";
       this.form = {
         mysql_host: "",
         mysql_port: 3306,
@@ -267,7 +213,7 @@ type testDB struct {
         mysql_table: "",
         mysql_passwd: "",
         mysql_user: "",
-        view_type:""
+        view_type:"md"
       };
       this.$emit('cleanDb')
     },
@@ -283,7 +229,6 @@ type testDB struct {
     },
     resetForm(formName) {
       this.value = "";
-      this.code = "package test";
       this.$refs[formName].resetFields();
       this.setFuckDbChangeDBList();
     }

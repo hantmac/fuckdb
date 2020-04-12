@@ -58,7 +58,10 @@ export default {
   // inject:['reload'],
   name: "home",
   components: {
-    Editor, HeaderNav,FuckDbPost,DumpPost
+    Editor,
+    HeaderNav,
+    FuckDbPost,
+    DumpPost
   },
   data() {
     return {
@@ -70,64 +73,11 @@ type testDB struct {
 }
 `,
       tabName: "FuckDb", //"struct-to-sql"
-      codeSql: `
-      CREATE TABLE \`auto_generated\`
-      (
-        \`registration_date\` varchar(128) NOT NULL ,
-
-      ) engine=innodb DEFAULT charset=utf8mb4;
-      `,
-      form: {
-        mysql_host: "",
-        mysql_port: 3306,
-        mysql_db: "",
-        mysql_table: "",
-        mysql_passwd: "",
-        mysql_user: "",
-        package_name: "",
-        struct_name: "",
-        json_annotation: "true",
-        xml_annotation: "false",
-        gorm_annotation: "true"
-      },
-      rules: {
-        mysql_host: [
-          { required: true, message: "mysql_host is empty", trigger: "blur" }
-        ],
-        mysql_db: [
-          { required: true, message: "mysql_db is empty", trigger: "blur" }
-        ],
-        mysql_table: [
-          { required: true, message: "mysql_table is empty", trigger: "blur" }
-        ],
-        mysql_passwd: [
-          { required: true, message: "mysql_passwd is empty", trigger: "blur" }
-        ],
-        mysql_user: [
-          { required: true, message: "mysql_user is empty", trigger: "blur" }
-        ],
-        package_name: [
-          { required: true, message: "package_name is empty", trigger: "blur" }
-        ],
-        struct_name: [
-          { required: true, message: "struct_name is empty", trigger: "blur" }
-        ],
-        mysql_port: [
-          {
-            required: true,
-            type: "number",
-            message: "port must be integer",
-            trigger: "blur"
-          }
-        ]
-      },
+      codeSql:"",
       optionsDBLog: [],
       FuckDbList: [],
       value: ""
     };
-  },
-  mounted() {
-    this.setFuckDbChangeDBList();
   },
   methods: {
     editorInit() {
@@ -262,72 +212,14 @@ type testDB struct {
       });
       this.FuckDbList = FuckDbList;
     },
-    setFuckDbChangeDBList() {
-      let FuckDbList = window.localStorage.getItem("FuckDb_List");
-      if (FuckDbList) {
-        FuckDbList = JSON.parse(FuckDbList);
-        this.FuckDbList = FuckDbList;
-        this.optionsDBLog = [];
-        FuckDbList.forEach((obj, index) => {
-          this.optionsDBLog.push({
-            value: index,
-            label: `${obj.mysql_user}@${obj.mysql_host}`
-          });
-        });
-      }
-    },
-    changeDBList(index) {
-      if (index !== "") {
-        this.form = this.FuckDbList[index];
-      }
-    },
-    clearDBList() {
-      this.code = "package test";
-      this.form = {
-        mysql_host: "",
-        mysql_port: 3306,
-        mysql_db: "",
-        mysql_table: "",
-        mysql_passwd: "",
-        mysql_user: "",
-        package_name: "",
-        struct_name: "",
-        json_annotation: "true",
-        xml_annotation: "true",
-        gorm_annotation: "true"
-      };
-    },
     cleanDb() {
-      this.value = "";
-      this.FuckDbList = [];
-      this.optionsDBLog = [];
-      this.code = "package test";
-      this.form = {
-        mysql_host: "",
-        mysql_port: 3306,
-        mysql_db: "",
-        mysql_table: "",
-        mysql_passwd: "",
-        mysql_user: "",
-        package_name: "",
-        struct_name: "",
-        json_annotation: "true",
-        xml_annotation: "true",
-        gorm_annotation: "true"
-      };
-
       window.localStorage.setItem("FuckDb_List", "");
     },
 
-    resetForm(formName) {
-      this.value = "";
-      this.code = "package test";
-      this.$refs[formName].resetFields();
-      this.setFuckDbChangeDBList();
-    },
     handleCommand(command) {
       if (command === "FuckDb" || command === "Dump") {
         // this.reload()
+        this.code = "package test"
         document.getElementById("app").style.overflowY = "auto";
       } else {
         document.getElementById("app").style.overflowY = "hidden";
