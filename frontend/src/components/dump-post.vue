@@ -1,5 +1,5 @@
 <template>
-    <div class="m-fuckDb" v-show="tabName == 'dump'">
+  <div class="m-fuckDb">
       <el-form ref="form" :model="form" :rules="rules" label-width="130px" size="medium">
         <el-row>
           <el-col :span="24">
@@ -65,13 +65,14 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="请选择输出格式">
-              <select v-model="form.view_type">
-                <option disabled value="">请选择</option>
-                <option value="md">markdown</option>
-                <option value="json">json</option>
-                <option value="txt">txt</option>
-                <option value="csv">csv</option>
-              </select>
+              <el-select v-model="form.view_type" placeholder="请选择">
+                <el-option
+                  v-for="item in viewOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -92,7 +93,145 @@
         </el-form-item>
       </el-form>
       <div class="m-body">
-        <highlight-code lang="golang">{{code}}</highlight-code>
+        <highlight-code lang="golang">{{result}}</highlight-code>
       </div>
     </div>
 </template>
+
+<script>
+
+export default {
+  // inject:['reload'],
+  name: "dump-post",
+  props:['result'],
+  components: {
+  },
+  data() {
+    return {
+      form: {
+        mysql_host: "",
+        mysql_port: 3306,
+        mysql_db: "",
+        mysql_table: "",
+        mysql_passwd: "",
+        mysql_user: "",
+        view_type:"md",
+      },
+      rules: {
+        mysql_host: [
+          { required: true, message: "mysql_host is empty", trigger: "blur" }
+        ],
+        mysql_db: [
+          { required: true, message: "mysql_db is empty", trigger: "blur" }
+        ],
+        mysql_table: [
+          { required: true, message: "mysql_table is empty", trigger: "blur" }
+        ],
+        mysql_passwd: [
+          { required: true, message: "mysql_passwd is empty", trigger: "blur" }
+        ],
+        mysql_user: [
+          { required: true, message: "mysql_user is empty", trigger: "blur" }
+        ],
+        view_type: [
+          { required: true, message: "view_type is empty", trigger: "blur" }
+        ],
+        mysql_port: [
+          {
+            required: true,
+            type: "number",
+            message: "port must be integer",
+            trigger: "blur"
+          }
+        ]
+      },
+      optionsDBLog: [],
+      FuckDbList: [],
+      viewOptions: [
+        {
+          value: 'md',
+          label: 'markdown'
+        }, {
+          value: 'json',
+          label: 'json'
+        }, {
+          value: 'txt',
+          label: 'txt'
+        },{
+          value: 'csv',
+          label: 'csv'
+        }
+      ],
+      value: ""
+    };
+  },
+  // updated() {
+  //   this.setFuckDbChangeDBList();
+  // },
+  mounted() {
+    this.setFuckDbChangeDBList();
+  },
+  methods: {
+    setFuckDbChangeDBList() {
+      let FuckDbList = window.localStorage.getItem("FuckDb_List");
+      if (FuckDbList) {
+        FuckDbList = JSON.parse(FuckDbList);
+        this.FuckDbList = FuckDbList;
+        this.optionsDBLog = [];
+        FuckDbList.forEach((obj, index) => {
+          this.optionsDBLog.push({
+            value: index,
+            label: `${obj.mysql_user}@${obj.mysql_host}`
+          });
+        });
+      }
+    },
+    changeDBList(index) {
+      if (index !== "") {
+        this.form = this.FuckDbList[index];
+      }
+    },
+    clearDBList() {
+      this.form = {
+        mysql_host: "",
+        mysql_port: 3306,
+        mysql_db: "",
+        mysql_table: "",
+        mysql_passwd: "",
+        mysql_user: "",
+        view_type:""
+      };
+    },
+    cleanDb() {
+      this.value = "";
+      this.FuckDbList = [];
+      this.optionsDBLog = [];
+      this.form = {
+        mysql_host: "",
+        mysql_port: 3306,
+        mysql_db: "",
+        mysql_table: "",
+        mysql_passwd: "",
+        mysql_user: "",
+        view_type:"md"
+      };
+      this.$emit('cleanDb')
+    },
+    onSubmit(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.$emit('formData', this.form)
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.value = "";
+      this.$refs[formName].resetFields();
+      this.setFuckDbChangeDBList();
+    }
+  }
+};
+</script>

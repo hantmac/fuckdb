@@ -1,5 +1,5 @@
 <template>
-  <div class="m-fuckDb" v-show="tabName == 'FuckDb'">
+  <div class="m-fuckDb">
       <el-form ref="form" :model="form" :rules="rules" label-width="130px" size="medium">
         <el-row>
           <el-col :span="24">
@@ -121,7 +121,144 @@
         </el-form-item>
       </el-form>
       <div class="m-body">
-        <highlight-code lang="golang">{{code}}</highlight-code>
+        <highlight-code lang="golang">{{result}}</highlight-code>
       </div>
     </div>
 </template>
+
+<script>
+export default {
+  // inject:['reload'],
+  name: "fuckdb-post",
+  props:['result'],
+  components: {
+
+  },
+  data() {
+    return {
+      // code: "package test",
+      form: {
+        mysql_host: "127.0.0.1",
+        mysql_port: 3306,
+        mysql_db: "",
+        mysql_table: "",
+        mysql_passwd: "",
+        mysql_user: "",
+        package_name: "",
+        struct_name: "",
+        json_annotation: "true",
+        xml_annotation: "false",
+        gorm_annotation: "true"
+      },
+      rules: {
+        mysql_host: [
+          { required: true, message: "mysql_host is empty", trigger: "blur" }
+        ],
+        mysql_db: [
+          { required: true, message: "mysql_db is empty", trigger: "blur" }
+        ],
+        mysql_table: [
+          { required: true, message: "mysql_table is empty", trigger: "blur" }
+        ],
+        mysql_passwd: [
+          { required: true, message: "mysql_passwd is empty", trigger: "blur" }
+        ],
+        mysql_user: [
+          { required: true, message: "mysql_user is empty", trigger: "blur" }
+        ],
+        package_name: [
+          { required: true, message: "package_name is empty", trigger: "blur" }
+        ],
+        struct_name: [
+          { required: true, message: "struct_name is empty", trigger: "blur" }
+        ],
+        mysql_port: [
+          {
+            required: true,
+            type: "number",
+            message: "port must be integer",
+            trigger: "blur"
+          }
+        ]
+      },
+      optionsDBLog: [],
+      FuckDbList: [],
+      value: ""
+    };
+  },
+  mounted() {
+    this.setFuckDbChangeDBList();
+  },
+  methods: {
+    setFuckDbChangeDBList() {
+      let FuckDbList = window.localStorage.getItem("FuckDb_List");
+      if (FuckDbList) {
+        FuckDbList = JSON.parse(FuckDbList);
+        this.FuckDbList = FuckDbList;
+        this.optionsDBLog = [];
+        FuckDbList.forEach((obj, index) => {
+          this.optionsDBLog.push({
+            value: index,
+            label: `${obj.mysql_user}@${obj.mysql_host}`
+          });
+        });
+      }
+    },
+    changeDBList(index) {
+      if (index !== "") {
+        this.form = this.FuckDbList[index];
+      }
+    },
+    clearDBList() {
+      // this.code = "package test";
+      this.form = {
+        mysql_host: "",
+        mysql_port: 3306,
+        mysql_db: "",
+        mysql_table: "",
+        mysql_passwd: "",
+        mysql_user: "",
+        package_name: "",
+        struct_name: "",
+        json_annotation: "true",
+        xml_annotation: "true",
+        gorm_annotation: "true"
+      };
+    },
+    cleanDb() {
+      this.value = "";
+      this.FuckDbList = [];
+      this.optionsDBLog = [];
+      this.form = {
+        mysql_host: "",
+        mysql_port: 3306,
+        mysql_db: "",
+        mysql_table: "",
+        mysql_passwd: "",
+        mysql_user: "",
+        package_name: "",
+        struct_name: "",
+        json_annotation: "true",
+        xml_annotation: "true",
+        gorm_annotation: "true"
+      };
+      this.$emit('cleanDb')
+    },
+    onSubmit(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.$emit('formData', this.form)
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.value = "";
+      this.$refs[formName].resetFields();
+      this.setFuckDbChangeDBList();
+    },
+  }
+}
+</script>
