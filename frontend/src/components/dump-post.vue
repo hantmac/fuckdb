@@ -81,6 +81,7 @@
           <div class="f-fl">
             <el-button type="primary" @click="onSubmit('form')">Create</el-button>
             <el-button @click="resetForm('form')">Reset</el-button>
+            <el-button type="info" @click="doCopy">Copy</el-button>
           </div>
           <div class="u-tips">
             <p>
@@ -231,7 +232,17 @@ export default {
       this.value = "";
       this.$refs[formName].resetFields();
       this.setFuckDbChangeDBList();
-    }
+    },
+    doCopy: function () {
+        this.$copyText(this.result).then( (e) => {
+          this.$message({
+            message: 'Copy success.',
+            type: 'success'
+          })
+        }, function (e) {
+          this.$message.error('Copy failed !')
+        })
+      }
   }
 };
 </script>
