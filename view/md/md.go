@@ -65,7 +65,7 @@ func (v *View) renderTable(table *model.Table, out io.Writer) {
 	for i := range table.Columns {
 		rows = append(rows, []string{
 			table.Columns[i].Name,
-			table.Columns[i].DataType,
+			table.Columns[i].ColumnType,
 			// table.Columns[i].Nullable,
 			table.Columns[i].Key,
 			table.Columns[i].Default,

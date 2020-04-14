@@ -39,17 +39,18 @@ type Table struct {
 
 // Column 列元信息
 type Column struct {
-	DB        string            `json:"-"`
-	Table     string            `json:"-"`
-	Name      string            `json:"name,omitempty"`
-	Default   string            `json:"default,omitempty"`
-	Nullable  string            `json:"nullable,omitempty"`
-	DataType  string            `json:"data_type,omitempty"`
-	Key       string            `json:"key,omitempty"`
-	CharSet   string            `json:"charset,omitempty"`
-	Collation string            `json:"collation,omitempty"`
-	Comment   string            `json:"comment,omitempty"`
-	Extra     map[string]string `json:"extra,omitempty"`
+	DB         string            `json:"-"`
+	Table      string            `json:"-"`
+	Name       string            `json:"name,omitempty"`
+	Default    string            `json:"default,omitempty"`
+	Nullable   string            `json:"nullable,omitempty"`
+	DataType   string            `json:"data_type,omitempty"`
+	ColumnType string            `json:"column_type,omitempty"`
+	Key        string            `json:"key,omitempty"`
+	CharSet    string            `json:"charset,omitempty"`
+	Collation  string            `json:"collation,omitempty"`
+	Comment    string            `json:"comment,omitempty"`
+	Extra      map[string]string `json:"extra,omitempty"`
 }
 
 // IRepo 数据库元信息查询接口
@@ -188,20 +189,21 @@ func (repo *Repo) getTables(cond *table) (items []table, err error) {
 }
 
 type column struct {
-	Schema    string `json:"TABLE_SCHEMA"`
-	Table     string `json:"TABLE_NAME"`
-	Name      string `json:"COLUMN_NAME"`
-	Default   string `json:"COLUMN_DEFAULT"`
-	Nullable  string `json:"IS_NULLABLE"`
-	DataType  string `json:"COLUMN_TYPE"`
-	Key       string `json:"COLUMN_KEY"`
-	CharSet   string `json:"CHARACTER_SET_NAME"`
-	Collation string `json:"COLLATION_NAME"`
-	Comment   string `json:"COLUMN_COMMENT"`
+	Schema     string `json:"TABLE_SCHEMA"`
+	Table      string `json:"TABLE_NAME"`
+	Name       string `json:"COLUMN_NAME"`
+	Default    string `json:"COLUMN_DEFAULT"`
+	Nullable   string `json:"IS_NULLABLE"`
+	DataType   string `json:"DATA_TYPE"`
+	ColumnType string `json:"COLUMN_TYPE"`
+	Key        string `json:"COLUMN_KEY"`
+	CharSet    string `json:"CHARACTER_SET_NAME"`
+	Collation  string `json:"COLLATION_NAME"`
+	Comment    string `json:"COLUMN_COMMENT"`
 }
 
 func (repo *Repo) getColumns(cond *column) (items []column, err error) {
-	query := "SELECT COLUMN_NAME, COLUMN_KEY, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT, COLUMN_COMMENT, CHARACTER_SET_NAME, COLLATION_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = (?) AND TABLE_NAME = (?)"
+	query := "SELECT COLUMN_NAME, COLUMN_KEY, DATA_TYPE, COLUMN_TYPE, IS_NULLABLE, COLUMN_COMMENT, COLUMN_DEFAULT, CHARACTER_SET_NAME, COLLATION_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = (?) AND TABLE_NAME = (?)"
 
 	rows, err := repo.db.Query(query, cond.Schema, cond.Table)
 	defer rows.Close()
@@ -219,25 +221,27 @@ func (repo *Repo) getColumns(cond *column) (items []column, err error) {
 		var columnName string
 		var columnKey string
 		var dataType string
+		var columnType string
 		var nullable string
 		var defaultVal string
 		var comment string
 		var charSet string
 		var collection string
 
-		rows.Scan(&columnName, &columnKey, &dataType, &nullable, &defaultVal, &comment, &charSet, &collection)
+		rows.Scan(&columnName, &columnKey, &dataType, &columnType, &nullable, &comment, &defaultVal, &charSet, &collection)
 
 		items = append(items, column{
-			Schema:    cond.Schema,
-			Table:     cond.Table,
-			Name:      columnName,
-			Key:       columnKey,
-			DataType:  dataType,
-			Nullable:  nullable,
-			Default:   defaultVal,
-			Comment:   comment,
-			CharSet:   charSet,
-			Collation: collection,
+			Schema:     cond.Schema,
+			Table:      cond.Table,
+			Name:       columnName,
+			Key:        columnKey,
+			DataType:   dataType,
+			ColumnType: columnType,
+			Nullable:   nullable,
+			Default:    defaultVal,
+			Comment:    comment,
+			CharSet:    charSet,
+			Collation:  collection,
 		})
 
 	}
@@ -337,6 +341,7 @@ func (repo *Repo) GetColumns(cond *Column) (items []Column, err error) {
 		cCond.CharSet = cond.CharSet
 		cCond.Collation = cond.Collation
 		cCond.DataType = cond.DataType
+		cCond.ColumnType = cond.ColumnType
 		cCond.Key = cond.Key
 		cCond.Comment = cond.Comment
 	}
@@ -347,16 +352,17 @@ func (repo *Repo) GetColumns(cond *Column) (items []Column, err error) {
 
 	for i := range cols {
 		items = append(items, Column{
-			DB:        cols[i].Schema,
-			Table:     cols[i].Table,
-			Name:      cols[i].Name,
-			Default:   cols[i].Default,
-			Nullable:  cols[i].Nullable,
-			DataType:  cols[i].DataType,
-			Key:       cols[i].Key,
-			CharSet:   cols[i].CharSet,
-			Collation: cols[i].Collation,
-			Comment:   cols[i].Comment,
+			DB:         cols[i].Schema,
+			Table:      cols[i].Table,
+			Name:       cols[i].Name,
+			Default:    cols[i].Default,
+			Nullable:   cols[i].Nullable,
+			DataType:   cols[i].DataType,
+			ColumnType: cols[i].ColumnType,
+			Key:        cols[i].Key,
+			CharSet:    cols[i].CharSet,
+			Collation:  cols[i].Collation,
+			Comment:    cols[i].Comment,
 		})
 	}
 	return items, nil
