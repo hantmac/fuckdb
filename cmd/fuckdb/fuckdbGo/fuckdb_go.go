@@ -19,7 +19,9 @@ type DBConf struct {
 		Database       string `json:"database"`
 		PackageName    string `json:"packageName"`
 		StructName     string `json:"structName"`
+		StructSorted   bool   `json:"struct_sorted"`
 		JSONAnnotation bool   `json:"jsonAnnotation"`
+		XMLAnnotation  bool   `json:"xmlAnnotation"`
 		GormAnnotation bool   `json:"gormAnnotation"`
 	} `json:"db"`
 }
@@ -70,7 +72,7 @@ func FuckdbGo() string {
 
 	structInfo, err := bases.Generate(*columnDataTypes, mysqlInfo.Db.Table, mysqlInfo.Db.StructName,
 		mysqlInfo.Db.PackageName, mysqlInfo.Db.JSONAnnotation, mysqlInfo.Db.GormAnnotation,
-		false, false, false, true)
+		mysqlInfo.Db.XMLAnnotation, false, false, true, mysqlInfo.Db.StructSorted)
 
 	return string(structInfo)
 }

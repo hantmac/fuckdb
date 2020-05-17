@@ -63,14 +63,17 @@ func GetColumnsFromMysqlTable(mariadbUser string, mariadbPassword string, mariad
 }
 
 // Generate go struct entries for a map[string]interface{} structure
-func generateMysqlTypes(obj map[string]map[string]string, depth int, jsonAnnotation bool, gormAnnotation bool, xmlAnnotation bool, xormAnnotation bool, fakerAnnotation bool, gureguTypes bool) string {
+func generateMysqlTypes(obj map[string]map[string]string, depth int, jsonAnnotation bool, gormAnnotation bool,
+	xmlAnnotation bool, xormAnnotation bool, fakerAnnotation bool, gureguTypes bool, structSorted bool) string {
 	structure := "struct {"
 
 	keys := make([]string, 0, len(obj))
 	for key := range obj {
 		keys = append(keys, key)
 	}
-	sort.Strings(keys)
+	if structSorted {
+		sort.Strings(keys)
+	}
 
 	for _, key := range keys {
 		mysqlType := obj[key]
