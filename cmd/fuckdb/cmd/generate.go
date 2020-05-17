@@ -32,7 +32,9 @@ var mysqlInfo = `{
     "database": "db_example",
     "packageName": "packageName",
     "structName": "structName",
+    "structSorted": false,
     "jsonAnnotation": true,
+    "xmlAnnotation": false,
     "gormAnnotation": true
       }
 }`
@@ -53,7 +55,9 @@ var generateCmd = &cobra.Command{
     "database": "db_example",
     "packageName": "packageName",
     "structName": "structName",
+	"structSorted": false,
     "jsonAnnotation": true,
+    "xmlAnnotation": false,
     "gormAnnotation": true
       }
 }`,
