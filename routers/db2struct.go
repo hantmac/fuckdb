@@ -25,6 +25,7 @@ type MysqlInfoReqData struct {
 	XormAnnotation  bool   `json:"xorm_annotation"`
 	FakerAnnotation bool   `json:"faker_annotation"`
 	GureGuTypes     bool   `json:"gure_gu_types"`
+	StructSorted    bool   `json:"struct_sorted"`
 }
 
 func DbToGoStruct(c *gin.Context) {
@@ -58,9 +59,14 @@ func DbToGoStruct(c *gin.Context) {
 		mysqlInfo.PackageName = "my_new_package"
 	}
 
+	if !mysqlInfo.StructSorted {
+		mysqlInfo.StructSorted = false
+	}
+
 	structInfo, err := bases.Generate(*columnDataTypes, mysqlInfo.MysqlTable, mysqlInfo.StructName,
 		mysqlInfo.PackageName, mysqlInfo.JsonAnnotation, mysqlInfo.GormAnnotation,
-		mysqlInfo.XmlAnnotation, mysqlInfo.XormAnnotation, mysqlInfo.FakerAnnotation, mysqlInfo.GureGuTypes)
+		mysqlInfo.XmlAnnotation, mysqlInfo.XormAnnotation, mysqlInfo.FakerAnnotation,
+		mysqlInfo.GureGuTypes, mysqlInfo.StructSorted)
 
 	if err != nil {
 		fmt.Println("Error in creating struct from json: " + err.Error())
