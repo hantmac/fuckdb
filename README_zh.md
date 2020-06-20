@@ -42,7 +42,8 @@ type InsInfo struct {
 ### fuckdb Lite
 
 #### install
-- macos 
+
+- macos
 
   ```
   brew tap hantmac/tap && brew install fuckdb
@@ -79,3 +80,8 @@ curl https://github.com/hantmac/fuckdb/releases/download/v0.2/fuckdb_linux.tar.g
 
 
 欢迎试用&反馈&Contribute。代码地址：https://github.com/hantmac/fuckdb
+
+更详细的使用方式可订阅公众号 `Go_Official_Blog` 了解
+
+
+![](https://user-gold-cdn.xitu.io/2020/3/27/1711c6a37c75e3fb?w=142&h=142&f=jpeg&s=10725)
