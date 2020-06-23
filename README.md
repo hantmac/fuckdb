@@ -30,7 +30,7 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 - Boom！Enjoy your coffee and copy your struct code.
 ![](https://tva1.sinaimg.cn/large/006tNbRwly1g9w531osobj31u90u0jzq.jpg)
 
-### fuckdb Lite
+### CMD - fuckdb Lite
 #### install
 - macos 
  ```
