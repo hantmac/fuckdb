@@ -62,6 +62,7 @@ curl https://github.com/hantmac/fuckdb/releases/download/v0.2/fuckdb_linux.tar.g
   }
 }
 ```
+
 - then run `fuckdb go` and get your code!
 
 More info => 'Go_Official_Blog' on WeChat:

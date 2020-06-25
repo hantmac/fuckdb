@@ -2,6 +2,7 @@ package bases
 
 import (
 	"fmt"
+	"fuckdb/bases/model"
 	"go/format"
 	"strconv"
 	"strings"
@@ -78,14 +79,21 @@ var intToWordMap = []string{
 //Debug level logging
 var Debug = false
 
-// Generate Given a Column map with datatypes and a name structName,
-// attempts to generate a struct definition
-func Generate(columnTypes map[string]map[string]string, tableName string, structName string, pkgName string,
-	jsonAnnotation bool, gormAnnotation bool, xmlAnnotation bool, xormAnnotation bool,
-	fakerAnnotation bool, gureguTypes bool, structSorted bool) ([]byte, error) {
+// GenStructInfo attempts to generate a struct definition
+func GenStructInfo(repo model.IRepo, dbName string, tableName string, structName string, pkgName string,
+	jsonAnnotation bool, gormAnnotation bool, xmlAnnotation bool, xormAnnotation bool, fakerAnnotation bool, gureguTypes bool) ([]byte, error) {
 
-	dbTypes := generateMysqlTypes(columnTypes, 0, jsonAnnotation, gormAnnotation, xmlAnnotation, xormAnnotation, fakerAnnotation, gureguTypes, structSorted)
+	column := &model.Column{
+		DB:    dbName,
+		Table: tableName,
+	}
+	columns, err := repo.GetColumns(column)
 
+	if err != nil {
+		fmt.Println("Error get columns meta data: " + err.Error())
+		return nil, err
+	}
+	dbTypes := generateColumnTypes(columns, 0, jsonAnnotation, gormAnnotation, xmlAnnotation, xormAnnotation, fakerAnnotation, gureguTypes)
 	src := fmt.Sprintf("package %s\ntype %s %s}",
 		pkgName,
 		structName,
@@ -211,4 +219,45 @@ func stringifyFirstChar(str string) string {
 	}
 
 	return intToWordMap[i] + "_" + str[1:]
+}
+
+// GetMetadata 根据目标数据库名和表名，返回目标数据库及其表的元数据。
+func GetMetadata(repo model.IRepo, db string, tables ...string) (dbs []model.DB, err error) {
+	if db == "" && len(tables) > 0 {
+		panic("unreachable")
+	}
+
+	// 获取所有数据库下的表
+	if db == "" {
+		return repo.GetDBs(nil, false)
+	}
+
+	// 获取单个数据库下的表
+	if len(tables) == 0 {
+		return repo.GetDBs(&model.DB{
+			Name: db,
+		}, false)
+	}
+
+	// 获取单个数据库下的若干表
+	dbs, err = repo.GetDBs(&model.DB{
+		Name: db,
+	}, true)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range dbs {
+		for j := range tables {
+			tables, err := repo.GetTables(&model.Table{
+				DB:   dbs[i].Name,
+				Name: tables[j],
+			})
+			if err != nil {
+				return nil, err
+			}
+			dbs[i].Tables = append(dbs[i].Tables, tables...)
+		}
+	}
+	return dbs, nil
 }

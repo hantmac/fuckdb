@@ -1,36 +1,36 @@
 package routers
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"fuckdb/bases"
 	"fuckdb/bases/model"
 	"fuckdb/services"
+	"fuckdb/view"
+	"io"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lexkong/log"
 )
 
-type MysqlInfoReqData struct {
-	MysqlHost       string `json:"mysql_host"`
-	MysqlPort       int    `json:"mysql_port"`
-	MysqlDB         string `json:"mysql_db"`
-	MysqlTable      string `json:"mysql_table"`
-	MysqlPasswd     string `json:"mysql_passwd"`
-	MysqlUser       string `json:"mysql_user"`
-	PackageName     string `json:"package_name"`
-	StructName      string `json:"struct_name"`
-	XMLAnnotation   bool   `json:"xml_annotation"`
-	JSONAnnotation  bool   `json:"json_annotation"`
-	GormAnnotation  bool   `json:"gorm_annotation"`
-	XormAnnotation  bool   `json:"xorm_annotation"`
-	FakerAnnotation bool   `json:"faker_annotation"`
-	GureGuTypes     bool   `json:"gure_gu_types"`
+type MysqlViewReqData struct {
+	MysqlHost   string `json:"mysql_host"`
+	MysqlPort   int    `json:"mysql_port"`
+	MysqlDB     string `json:"mysql_db"`
+	MysqlTable  string `json:"mysql_table"`
+	MysqlPasswd string `json:"mysql_passwd"`
+	MysqlUser   string `json:"mysql_user"`
+	ViewType    string `json:"view_type"`
 }
 
-func DbToGoStruct(c *gin.Context) {
-	var mysqlInfo MysqlInfoReqData
+var out io.Writer = os.Stdout
+
+// DbToView  DB2view view type:csv/md/json/txt
+func DbToView(c *gin.Context) {
+	var mysqlInfo MysqlViewReqData
 	err := c.ShouldBindJSON(&mysqlInfo)
 	if err != nil {
 		services.HandleError(http.StatusBadRequest, c, err)
@@ -63,21 +63,35 @@ func DbToGoStruct(c *gin.Context) {
 		return
 	}
 
-	structInfo, err := bases.GenStructInfo(repo, mysqlInfo.MysqlDB, mysqlInfo.MysqlTable, mysqlInfo.StructName,
-		mysqlInfo.PackageName, mysqlInfo.JSONAnnotation, mysqlInfo.GormAnnotation,
-		mysqlInfo.XMLAnnotation, mysqlInfo.XormAnnotation, mysqlInfo.FakerAnnotation,
-		mysqlInfo.GureGuTypes)
-
+	dbs, err := bases.GetMetadata(repo, mysqlInfo.MysqlDB, mysqlInfo.MysqlTable)
 	if err != nil {
-		fmt.Println("Error in creating struct from json: " + err.Error())
+		fmt.Println("Error in get meta data")
+		services.HandleError(http.StatusInternalServerError, c, err)
+		return
+	}
+	// Output as target viewer
+	v := view.SelectViewer(mysqlInfo.ViewType)
+	if v == nil {
+		fmt.Println("unsupported viewer error :" + err.Error())
+		return
+	}
+
+	// if err = v.Do(dbs, out); err != nil {
+	// 	fmt.Println("dump viewer error :" + err.Error())
+	// 	services.HandleError(http.StatusInternalServerError, c, err)
+	// 	return
+	// }
+
+	buf := new(bytes.Buffer)
+	if err = v.Do(dbs, buf); err != nil {
+		fmt.Println("dump viewer error :" + err.Error())
 		services.HandleError(http.StatusInternalServerError, c, err)
 		return
 	}
 
-	fmt.Println(string(structInfo))
 	c.JSON(http.StatusOK, services.Response{
 		Status:  "0",
 		Message: "Ok",
-		Data:    string(structInfo),
+		Data:    buf.String(),
 	})
 }
