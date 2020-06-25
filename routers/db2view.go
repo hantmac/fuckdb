@@ -76,12 +76,6 @@ func DbToView(c *gin.Context) {
 		return
 	}
 
-	// if err = v.Do(dbs, out); err != nil {
-	// 	fmt.Println("dump viewer error :" + err.Error())
-	// 	services.HandleError(http.StatusInternalServerError, c, err)
-	// 	return
-	// }
-
 	buf := new(bytes.Buffer)
 	if err = v.Do(dbs, buf); err != nil {
 		fmt.Println("dump viewer error :" + err.Error())
