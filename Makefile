@@ -10,7 +10,7 @@ gotool:
 	gofmt -w .
 	go vet . | grep -v vendor;true
 build-frontend:
-	cd frontend && sudo npm run build
+	cd frontend && npm run build
 fmt:
 	go fmt ./...
 start:
