@@ -75,14 +75,22 @@
      <el-form-item prop="struct_name" label="struct_name"><el-input v-model="form.struct_name" clearable></el-input></el-form-item>
     </el-col>
 
-     <el-col :span="8">
+    <el-col :span="8">
      <el-form-item label="json_annotation">
       <el-radio-group v-model="form.json_annotation">
         <el-radio label="true"></el-radio>
         <el-radio label="false"></el-radio>
       </el-radio-group>
      </el-form-item>
+    </el-col>
 
+    <el-col :span="8">
+     <el-form-item label="db_annotation">
+      <el-radio-group v-model="form.db_annotation">
+        <el-radio label="true"></el-radio>
+        <el-radio label="false"></el-radio>
+      </el-radio-group>
+     </el-form-item>
     </el-col>
    </el-row>
 
@@ -195,10 +203,11 @@ type testDB struct {
           mysql_db: '',
           mysql_table: '',
           mysql_passwd: '',
-          mysql_user: '',
-          package_name: '',
+          mysql_user: 'root',
+          package_name: 'test',
           struct_name: '',
           json_annotation: "true",
+          db_annotation: "true",
           xml_annotation: "false",
           gorm_annotation: "true"
         },
@@ -266,6 +275,7 @@ type testDB struct {
           "package_name": this.form.package_name,
           "struct_name": this.form.struct_name,
           "json_annotation": this.form.json_annotation === "true" ? true : false,
+          "db_annotation": this.form.db_annotation === "true" ? true : false,
           "xml_annotation": this.form.xml_annotation === "true" ? true : false,
           "gorm_annotation":this.form.gorm_annotation === "true" ? true : false
       }
@@ -359,6 +369,7 @@ type testDB struct {
           "package_name": "",
           "struct_name": "",
           "json_annotation": "true",
+          "db_annotation": "true",
           "xml_annotation":  "true",
           "gorm_annotation": "true"
       }
@@ -378,6 +389,7 @@ type testDB struct {
           "package_name": "",
           "struct_name": "",
           "json_annotation": "true",
+          "db_annotation": "true",
           "xml_annotation":  "true",
           "gorm_annotation": "true"
       }

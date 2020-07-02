@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"fuckdb/bases"
 	"fuckdb/services"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/lexkong/log"
-	"net/http"
 )
 
 type MysqlInfoReqData struct {
@@ -21,6 +22,7 @@ type MysqlInfoReqData struct {
 	StructName      string `json:"struct_name"`
 	XmlAnnotation   bool   `json:"xml_annotation"`
 	JsonAnnotation  bool   `json:"json_annotation"`
+	DBAnnotation    bool   `json:"db_annotation"`
 	GormAnnotation  bool   `json:"gorm_annotation"`
 	XormAnnotation  bool   `json:"xorm_annotation"`
 	FakerAnnotation bool   `json:"faker_annotation"`
@@ -64,7 +66,7 @@ func DbToGoStruct(c *gin.Context) {
 	}
 
 	structInfo, err := bases.Generate(*columnDataTypes, mysqlInfo.MysqlTable, mysqlInfo.StructName,
-		mysqlInfo.PackageName, mysqlInfo.JsonAnnotation, mysqlInfo.GormAnnotation,
+		mysqlInfo.PackageName, mysqlInfo.JsonAnnotation, mysqlInfo.DBAnnotation, mysqlInfo.GormAnnotation,
 		mysqlInfo.XmlAnnotation, mysqlInfo.XormAnnotation, mysqlInfo.FakerAnnotation,
 		mysqlInfo.GureGuTypes, mysqlInfo.StructSorted)
 
