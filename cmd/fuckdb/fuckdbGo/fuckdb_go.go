@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"fuckdb/cmd/fuckdb/bases"
-	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"log"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type DBConf struct {
@@ -21,6 +22,7 @@ type DBConf struct {
 		StructName     string `json:"structName"`
 		StructSorted   bool   `json:"struct_sorted"`
 		JSONAnnotation bool   `json:"jsonAnnotation"`
+		DBAnnotation   bool   `json:"dbAnnotation"`
 		XMLAnnotation  bool   `json:"xmlAnnotation"`
 		GormAnnotation bool   `json:"gormAnnotation"`
 	} `json:"db"`
