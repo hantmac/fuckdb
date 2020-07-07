@@ -15,8 +15,8 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 ### Source code deploy
 - git clone the source code
 - cd fuckdb/
-- cd frontend && npm run build
-- go run main.go
+- make build-frontend
+- make start
 - Use `localhost:8000` you will get the web UI
 - The same operation with docker deployment.
 

@@ -34,6 +34,7 @@ var mysqlInfo = `{
     "structName": "structName",
     "structSorted": false,
     "jsonAnnotation": true,
+    "dbAnnotation": false,
     "xmlAnnotation": false,
     "gormAnnotation": true
       }
@@ -57,6 +58,7 @@ var generateCmd = &cobra.Command{
     "structName": "structName",
 	"structSorted": false,
     "jsonAnnotation": true,
+    "dbAnnotation": false,
     "xmlAnnotation": false,
     "gormAnnotation": true
       }

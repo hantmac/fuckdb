@@ -9,11 +9,17 @@ clean:
 gotool:
 	gofmt -w .
 	go vet . | grep -v vendor;true
+build-frontend:
+	cd frontend && npm run build
+start:
+	go run main.go
 
 help:
 	@echo "make - compile the source code"
 	@echo "make clean - remove binary file and vim swp files"
 	@echo "make gotool - run go tool 'fmt' and 'vet'"
 	@echo "make install - install dependency"
+	@echo "make start - start backend service"
+	@echo "make build-frontend - build frontend"
 
 .PHONY: clean gotool ca help
