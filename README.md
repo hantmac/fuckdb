@@ -31,6 +31,7 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 ![](https://tva1.sinaimg.cn/large/006tNbRwly1g9w531osobj31u90u0jzq.jpg)
 
 ### CMD - fuckdb Lite
+> tips: fuckdb Lite 是单独使用的工具，跟上面的 fuckdb 没有关系
 #### install
 - macos 
  ```
@@ -39,7 +40,7 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 - Linux 
 
  ```
-curl https://github.com/hantmac/fuckdb/releases/download/v0.2/fuckdb_linux.tar.gz
+wget https://github.com/hantmac/fuckdb/releases/download/v0.3/fuckdb_linux.tar.gz &&  tar -zxvf fuckdb_linux.tar.gz
   ```
   
 - windows 
