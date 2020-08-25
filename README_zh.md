@@ -40,7 +40,7 @@ type InsInfo struct {
 上面的GIF展示了增加了缓存功能的版本，记忆你之前填写过的数据库信息，省去了大量重复的操作，你不用再填写繁琐的数据库名，表名，等等，只需一键，就可以得到对应的代码，是不是很方便啊。ps:目前数据库信息没有做加密，所以不方便放到公网上使用，仅限于内网，后面会进行相应的开发支持。目前这个工具在我们组内已经开始使用，反馈比较好，节省了很多重复的工作，尤其是在开发的时候用到同一个库的多张表，很快就可以完成数据库表->strcut的映射。
 
 ### fuckdb Lite
-
+> tips: fuckdb Lite 是单独使用的，与 上面的 fuckdb 无关
 #### install
 - macos 
 
@@ -51,7 +51,7 @@ type InsInfo struct {
 - Linux 
 
  ```
-curl https://github.com/hantmac/fuckdb/releases/download/v0.2/fuckdb_linux.tar.gz
+wget https://github.com/hantmac/fuckdb/releases/download/v0.3/fuckdb_linux.tar.gz && tar -zxvf fuckdb_linux.tar.gz
  ```
   
 - windows 
