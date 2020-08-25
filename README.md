@@ -31,7 +31,7 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 ![](https://tva1.sinaimg.cn/large/006tNbRwly1g9w531osobj31u90u0jzq.jpg)
 
 ### CMD - fuckdb Lite
-> tips: fuckdb Lite 是单独使用的工具，跟上面的 fuckdb 没有关系
+> tips: fuckdb Lite is a undependent tool, no need to install fuckdb first.
 #### install
 - macos 
  ```
