@@ -48,7 +48,7 @@ func DownloadStructFile(c *gin.Context) {
 	//返回文件路径
 	c.JSON(http.StatusOK, services.Response{
 		Status:  "0",
-		Message: "Ok",
+		Message: "ok",
 		Data:    filename,
 	})
 }
