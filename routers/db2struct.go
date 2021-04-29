@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lexkong/log"
+	"github.com/sirupsen/logrus"
 )
 
 type MysqlInfoReqData struct {
@@ -35,7 +35,7 @@ func DbToGoStruct(c *gin.Context) {
 	err := c.ShouldBindJSON(&mysqlInfo)
 	if err != nil {
 		services.HandleError(http.StatusBadRequest, c, err)
-		log.Error("Bind Err", err)
+		logrus.Errorln("Bind Err", err)
 		return
 	}
 

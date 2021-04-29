@@ -8,9 +8,8 @@ import (
 	"strings"
 
 	"github.com/fatih/structtag"
-	"github.com/lexkong/log"
-
 	"github.com/pinzolo/casee"
+	"github.com/sirupsen/logrus"
 )
 
 type SqlGenerator struct {
@@ -40,19 +39,19 @@ func (ms *SqlGenerator) GetCreateTableSql() (string, error) {
 		case *ast.Ident:
 			tag, err := generateSqlTag(field)
 			if err != nil {
-				log.Infof("generateSqlTag [%s] failed:%v", t.Name, err)
+				logrus.Infof("generateSqlTag [%s] failed:%v", t.Name, err)
 			} else {
 				tags = append(tags, fmt.Sprintf("%s %s", getColumnName(field), tag))
 			}
 		case *ast.SelectorExpr:
 			tag, err := generateSqlTag(field)
 			if err != nil {
-				log.Infof("generateSqlTag [%s] failed:%v", t.Sel.Name, err)
+				logrus.Infof("generateSqlTag [%s] failed:%v", t.Sel.Name, err)
 			} else {
 				tags = append(tags, fmt.Sprintf("%s %s", getColumnName(field), tag))
 			}
 		default:
-			log.Infof("field %s not supported, ignore", GetFieldName(field))
+			logrus.Infof("field %s not supported, ignore", GetFieldName(field))
 		}
 
 		columnName := getColumnName(field)
@@ -128,7 +127,7 @@ func (ms *SqlGenerator) getStructFieds(node ast.Node) []*ast.Field {
 		case *ast.SelectorExpr:
 			fields = append(fields, field)
 		default:
-			log.Infof("filed %s not supported, ignore", GetFieldName(field))
+			logrus.Infof("filed %s not supported, ignore", GetFieldName(field))
 		}
 	}
 
@@ -173,7 +172,7 @@ func generateSqlTag(field *ast.Field) (string, error) {
 
 		sqlType, err = mysqlTag(field, size, autoIncrease)
 		if err != nil {
-			log.Infof("get mysql field tag failed:%v", err)
+			logrus.Infof("get mysql field tag failed:%v", err)
 			return "", err
 		}
 	}
@@ -276,7 +275,7 @@ func GetFieldTag(field *ast.Field, key string) *structtag.Tag {
 	s, _ := strconv.Unquote(field.Tag.Value)
 	tags, err := structtag.Parse(s)
 	if err != nil {
-		log.Infof("parse tag string:%s failed:%v", field.Tag.Value, err)
+		logrus.Infof("parse tag string:%s failed:%v", field.Tag.Value, err)
 		return &structtag.Tag{}
 	}
 	tag, err := tags.Get(key)

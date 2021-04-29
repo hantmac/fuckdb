@@ -15,10 +15,9 @@ import (
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	"github.com/lexkong/log"
-	"github.com/spf13/viper"
-
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -56,10 +55,10 @@ func main() {
 
 	// init config
 	if err := config.InitConfig(""); err != nil {
-		log.Error("init config error:%s", err)
+		logrus.Errorln("init config error:%s", err)
 		panic(err)
 	}
-	log.Info("config init success")
+	logrus.Infoln("config init success")
 	var host = viper.GetString("server.host")
 	var port = viper.GetString("server.port")
 	fmt.Print(host + ":" + port)
@@ -79,9 +78,9 @@ func main() {
 		defer cancel()
 
 		if err := srv.Shutdown(ctx); err != nil {
-			log.Error("server shutdown failed,err:%V\n", err)
+			logrus.Errorln("server shutdown failed,err:", err)
 		}
-		log.Info("server shutdown gracefully")
+		logrus.Infoln("server shutdown gracefully")
 		close(processd)
 	}()
 
@@ -89,7 +88,7 @@ func main() {
 	fmt.Println(*addr)
 	fmt.Println("server successly")
 	if err != http.ErrServerClosed {
-		log.Error("server not shutdown gracefully,err:%v", err)
+		logrus.Errorln("server not shutdown gracefully,err:", err)
 	}
 
 	<-processd
