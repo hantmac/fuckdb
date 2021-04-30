@@ -1,6 +1,7 @@
 package bases
 
 import (
+	"bytes"
 	"database/sql"
 	"fmt"
 	"strconv"
@@ -9,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// GetColumnsFromMysqlTable Select column details from information schema and return map of map
+// GetTableInfo query table details from information schema
 func GetTableInfo(user string, password string, host string, port int, dbname string, tableName string) (*Table, error) {
 
 	var err error
@@ -91,35 +92,28 @@ func generateModelFields(table *Table, depth int, option *GenerateOption) string
 
 	for _, column := range table.Columns {
 
-		primary := ""
-		if column.PrimaryKey {
-			primary = ";primary_key"
-		}
-
 		// Get the corresponding go value type for this mysql type
 		valueType := mysqlTypeToGoType(column.Type, !column.NotNull, option.WithGureguTypes)
 
 		fieldName := fmtFieldName(stringifyFirstChar(column.Name))
 		var annotations []string
 		if option.WithGormAnnotation {
-			annotations = append(annotations, fmt.Sprintf("gorm:\"column:%s%s\"", column.Name, primary))
+			annotations = append(annotations, generateGormAnnotation(column))
 		}
 		if option.WithJsonAnnotation {
-			annotations = append(annotations, fmt.Sprintf("json:\"%s\"", column.Name))
+			annotations = append(annotations, generateJSONAnnotation(column))
 		}
-
 		if option.WithDBAnnotation {
-			annotations = append(annotations, fmt.Sprintf("db:\"%s\"", column.Name))
+			annotations = append(annotations, generateDBAnnotation(column))
 		}
-
 		if option.WithXmlAnnotation {
-			annotations = append(annotations, fmt.Sprintf("xml:\"%s\"", column.Name))
+			annotations = append(annotations, generateXMLAnnotation(column))
 		}
 		if option.WithXormAnnotation {
-			annotations = append(annotations, fmt.Sprintf("xorm:\"%s%s\"", column.Name, primary))
+			annotations = append(annotations, generateXormAnnotation(column))
 		}
 		if option.WithFakerAnnotation {
-			annotations = append(annotations, fmt.Sprintf("faker:\"%s\"", column.Name))
+			annotations = append(annotations, generateFakerAnnotation(column))
 		}
 		if len(annotations) > 0 {
 			structure += fmt.Sprintf("\n%s %s `%s`",
@@ -134,6 +128,39 @@ func generateModelFields(table *Table, depth int, option *GenerateOption) string
 		}
 	}
 	return structure
+}
+
+func generateGormAnnotation(col Column) string {
+	buf := bytes.NewBuffer(nil)
+	buf.WriteString(fmt.Sprintf("column:%s", col.Name))
+	if col.PrimaryKey {
+		buf.WriteString(";primaryKey")
+	}
+	if col.Unique {
+		buf.WriteString(";unique")
+	}
+	if col.NotNull {
+		buf.WriteString(";not null")
+	}
+	if col.AutoInc {
+		buf.WriteString(";autoIncrement")
+	}
+	return fmt.Sprintf(`gorm:"%s"`, buf.String())
+}
+func generateJSONAnnotation(col Column) string {
+	return fmt.Sprintf(`json:"%s"`, col.Name)
+}
+func generateDBAnnotation(col Column) string {
+	return fmt.Sprintf(`db:"%s"`, col.Name)
+}
+func generateXMLAnnotation(col Column) string {
+	return fmt.Sprintf(`xml:"%s"`, col.Name)
+}
+func generateXormAnnotation(col Column) string {
+	return fmt.Sprintf(`xorm:"%s"`, col.Name)
+}
+func generateFakerAnnotation(col Column) string {
+	return fmt.Sprintf(`faker:"%s"`, col.Name)
 }
 
 // mysqlTypeToGoType converts the mysql types to go compatible sql.NullAble (https://golang.org/pkg/database/sql/) types

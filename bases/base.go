@@ -3,11 +3,12 @@ package bases
 import (
 	"bytes"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"go/format"
 	"strconv"
 	"strings"
 	"unicode"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Constants for return types of golang
@@ -91,6 +92,13 @@ type GenerateOption struct {
 // Generate Given a Column map with datatypes and a name structName,
 // attempts to generate a struct definition
 func Generate(table *Table, structName string, pkgName string, option *GenerateOption) ([]byte, error) {
+	if pkgName == "" {
+		pkgName = "models"
+	}
+
+	if structName == "" {
+		structName = fmtFieldName(table.Name) + "Model"
+	}
 
 	fields := generateModelFields(table, 0, option)
 
@@ -103,6 +111,7 @@ func Generate(table *Table, structName string, pkgName string, option *GenerateO
 		"Fields":      fields,
 	}); err != nil {
 		logrus.Errorln("execute template error:", err)
+		return nil, err
 	}
 
 	formatted, err := format.Source(buf.Bytes())

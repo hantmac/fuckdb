@@ -27,6 +27,7 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		api.POST("/download", DownloadStructFile)
 		api.GET("/sql_str", services.FormatMysql)
 		api.GET("struct_sql", services.FromStructToSql)
+		api.POST("/tables", GetTables)
 	}
 	return g
 }

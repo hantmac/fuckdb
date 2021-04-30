@@ -1,9 +1,9 @@
 package bases
 
 type Table struct {
-	Name    string
-	Comment string
-	Columns []Column
+	Name    string   `json:"name"`
+	Comment string   `json:"comment"`
+	Columns []Column `json:"columns,omitempty"`
 }
 
 type Column struct {

@@ -53,13 +53,6 @@ func DbToGoStruct(c *gin.Context) {
 		return
 	}
 
-	if mysqlInfo.StructName == "" {
-		mysqlInfo.StructName = "MyNewStruct"
-	}
-	if mysqlInfo.PackageName == "" {
-		mysqlInfo.PackageName = "my_new_package"
-	}
-
 	structInfo, err := bases.Generate(table, mysqlInfo.StructName,
 		mysqlInfo.PackageName,
 		&bases.GenerateOption{
