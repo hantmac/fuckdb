@@ -172,7 +172,6 @@
 
 <script>
 import service from "../config/api"
-import API from "../config/index"
 import Editor from 'vue2x-ace-editor'
 
 export default {
@@ -281,7 +280,7 @@ type testDB struct {
       }
 
       service({
-        url:  `${API.APIdb2struct}/api/db2struct`,
+        url:  `/api/db2struct`,
         method: "post",
         data,
       }).then(res => {

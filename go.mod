@@ -1,15 +1,15 @@
 module fuckdb
 
-go 1.13
+go 1.16
 
 require (
 	github.com/fatih/astrewrite v0.0.0-20191207154002-9094e544fcef
 	github.com/fatih/camelcase v1.0.0 // indirect
 	github.com/fatih/structtag v1.2.0
 	github.com/fsnotify/fsnotify v1.4.9
-	github.com/gin-contrib/static v0.0.0-20191128031702-f81c604d8ac2
 	github.com/gin-gonic/gin v1.5.0
-	github.com/go-sql-driver/mysql v1.4.1
+	github.com/go-sql-driver/mysql v1.5.0
+	github.com/jinzhu/gorm v1.9.16
 	github.com/mitchellh/mapstructure v1.2.2 // indirect
 	github.com/pelletier/go-toml v1.7.0 // indirect
 	github.com/pinzolo/casee v0.0.0-20191019093852-17765ba5eb57

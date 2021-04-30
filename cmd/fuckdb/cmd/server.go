@@ -1,30 +1,65 @@
-package main
+package cmd
 
 import (
 	"context"
-	"flag"
+	"embed"
 	"fmt"
 	"fuckdb/config"
 	"fuckdb/routers"
 	"fuckdb/routers/middleware"
+	"io/fs"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
 	"time"
 
-	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-func main() {
+// serverCmd represents the server command
+var serverCmd = &cobra.Command{
+	Use:   "server",
+	Short: "start a web server",
+	Run: func(cmd *cobra.Command, args []string) {
+		// init config
+		if err := config.InitConfig(""); err != nil {
+			logrus.Fatalln("init config error:%s", err)
+		}
+		logrus.Infoln("config init success")
 
+		var host = viper.GetString("server.host")
+		var port = viper.GetString("server.port")
+
+		go func() {
+			time.Sleep(time.Second)
+			openCmd := exec.Command("open", fmt.Sprintf("http://%s:%s/html", host, port))
+			if err := openCmd.Run(); err != nil {
+				logrus.Errorln("open browser error,please open browser manually. error:", err)
+			}
+		}()
+
+		startHTTPServer(host, port)
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(serverCmd)
+}
+
+//go:embed dist
+var dist embed.FS
+
+func startHTTPServer(host, port string) {
 	g := gin.Default()
 	//Use frontend static
-	g.Use(static.Serve("/", static.LocalFile("./frontend/dist", false)))
+	html, _ := fs.Sub(dist, "dist")
+	g.StaticFS("/html", http.FS(html))
+
 	// LoggerWithFormatter middleware
 	// By default gin.DefaultWriter = os.Stdout
 	g.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
@@ -53,22 +88,12 @@ func main() {
 		middlewares...,
 	)
 
-	// init config
-	if err := config.InitConfig(""); err != nil {
-		logrus.Errorln("init config error:%s", err)
-		panic(err)
-	}
-	logrus.Infoln("config init success")
-	var host = viper.GetString("server.host")
-	var port = viper.GetString("server.port")
-	fmt.Print(host + ":" + port)
-	var addr = flag.String("server addr", host+":"+port, "server addr")
 	// run server
 	srv := http.Server{
-		Addr:    *addr,
+		Addr:    fmt.Sprintf("%s:%s", host, port),
 		Handler: g,
 	}
-	processd := make(chan struct{})
+	processed := make(chan struct{})
 	go func() {
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, os.Interrupt)
@@ -81,15 +106,13 @@ func main() {
 			logrus.Errorln("server shutdown failed,err:", err)
 		}
 		logrus.Infoln("server shutdown gracefully")
-		close(processd)
+		close(processed)
 	}()
 
 	err := srv.ListenAndServe()
-	fmt.Println(*addr)
-	fmt.Println("server successly")
 	if err != http.ErrServerClosed {
 		logrus.Errorln("server not shutdown gracefully,err:", err)
 	}
 
-	<-processd
+	<-processed
 }
