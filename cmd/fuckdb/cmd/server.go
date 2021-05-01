@@ -11,7 +11,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"os/exec"
 	"os/signal"
 	"time"
 
@@ -24,7 +23,7 @@ import (
 // serverCmd represents the server command
 var serverCmd = &cobra.Command{
 	Use:   "server",
-	Short: "start a web server",
+	Short: "start a web server with UI",
 	Run: func(cmd *cobra.Command, args []string) {
 		// init config
 		if err := config.InitConfig(""); err != nil {
@@ -37,10 +36,8 @@ var serverCmd = &cobra.Command{
 
 		go func() {
 			time.Sleep(time.Second)
-			openCmd := exec.Command("open", fmt.Sprintf("http://%s:%s/html", host, port))
-			if err := openCmd.Run(); err != nil {
-				logrus.Errorln("open browser error,please open browser manually. error:", err)
-			}
+			url := fmt.Sprintf("http://%s:%s/html", host, port)
+			openBrowser(url)
 		}()
 
 		startHTTPServer(host, port)

@@ -10,11 +10,12 @@ gotool:
 	gofmt -w .
 	go vet . | grep -v vendor;true
 build-frontend:
-	cd frontend && npm run build && cd -
+	cd frontend && npm install && npm run build
 build: build-frontend
 	rm -rf cmd/fuckdb/cmd/dist
 	cp -r frontend/dist cmd/fuckdb/cmd
-	cd cmd/fuckdb && go build
+	cd cmd/fuckdb && go build -o fuckdb
+	mv cmd/fuckdb/fuckdb .
 
 start:
 	go run main.go
