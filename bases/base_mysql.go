@@ -1,118 +1,119 @@
 package bases
 
 import (
+	"bytes"
 	"database/sql"
-	"errors"
 	"fmt"
-	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 )
 
-// GetColumnsFromMysqlTable Select column details from information schema and return map of map
-func GetColumnsFromMysqlTable(mariadbUser string, mariadbPassword string, mariadbHost string, mariadbPort int, mariadbDatabase string, mariadbTable string) (*map[string]map[string]string, error) {
+// GetTableInfo query table details from information schema
+func GetTableInfo(user string, password string, host string, port int, dbname string, tableName string) (*Table, error) {
 
 	var err error
 	var db *sql.DB
-	if mariadbPassword != "" {
-		db, err = sql.Open("mysql", mariadbUser+":"+mariadbPassword+"@tcp("+mariadbHost+":"+strconv.Itoa(mariadbPort)+")/"+mariadbDatabase+"?&parseTime=True")
+	if password != "" {
+		db, err = sql.Open("mysql", user+":"+password+"@tcp("+host+":"+strconv.Itoa(port)+")/"+dbname+"?&parseTime=True")
 	} else {
-		db, err = sql.Open("mysql", mariadbUser+"@tcp("+mariadbHost+":"+strconv.Itoa(mariadbPort)+")/"+mariadbDatabase+"?&parseTime=True")
+		db, err = sql.Open("mysql", user+"@tcp("+host+":"+strconv.Itoa(port)+")/"+dbname+"?&parseTime=True")
 	}
 
 	// Check for error in db, note this does not check connectivity but does check uri
 	if err != nil {
-		fmt.Println("Error opening mysql db: " + err.Error())
+		logrus.Errorln("Error opening mysql db: " + err.Error())
 		return nil, err
 	}
 
 	defer db.Close()
 
-	// Store colum as map of maps
-	columnDataTypes := make(map[string]map[string]string)
-	// Select columnd data from INFORMATION_SCHEMA
-	columnDataTypeQuery := "SELECT COLUMN_NAME, COLUMN_KEY, DATA_TYPE, IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ? AND table_name = ?"
+	// Select column data from INFORMATION_SCHEMA
+	columnDataTypeQuery := "SELECT `COLUMN_NAME`, COLUMN_KEY, DATA_TYPE,COLUMN_DEFAULT, IS_NULLABLE,CHARACTER_MAXIMUM_LENGTH,EXTRA,COLUMN_COMMENT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ? AND table_name = ?"
 
-	if Debug {
-		fmt.Println("running: " + columnDataTypeQuery)
-	}
-
-	rows, err := db.Query(columnDataTypeQuery, mariadbDatabase, mariadbTable)
-
+	rows, err := db.Query(columnDataTypeQuery, dbname, tableName)
 	if err != nil {
-		fmt.Println("Error selecting from db: " + err.Error())
+		logrus.Errorln("Error selecting from db: " + err.Error())
 		return nil, err
 	}
-	if rows != nil {
-		defer rows.Close()
-	} else {
-		return nil, errors.New("No results returned for table ")
-	}
 
+	table := &Table{
+		Name:    tableName,
+		Columns: make([]Column, 0),
+	}
 	for rows.Next() {
-		var column string
+		var columnName string
 		var columnKey string
 		var dataType string
+		var defaultValue sql.NullString
 		var nullable string
-		rows.Scan(&column, &columnKey, &dataType, &nullable)
+		var maxLength sql.NullInt64
+		var extra string
+		var comment string
 
-		columnDataTypes[column] = map[string]string{"value": dataType, "nullable": nullable, "primary": columnKey}
+		if err := rows.Scan(&columnName, &columnKey, &dataType, &defaultValue, &nullable, &maxLength, &extra, &comment); err != nil {
+			logrus.Errorln("scan rows error:", err)
+			return nil, err
+		}
+
+		table.Columns = append(table.Columns, Column{
+			Name:       columnName,
+			Comment:    comment,
+			Type:       dataType,
+			Size:       int(maxLength.Int64),
+			NotNull:    !(nullable == "YES"),
+			Default:    defaultValue.String,
+			AutoInc:    isAutoInc(extra),
+			Unique:     isUnique(columnKey),
+			PrimaryKey: isPrimaryKey(columnKey),
+		})
 	}
 
-	return &columnDataTypes, err
+	return table, nil
 }
 
-// Generate go struct entries for a map[string]interface{} structure
-func generateMysqlTypes(obj map[string]map[string]string, depth int, jsonAnnotation bool, dbAnnotation bool,
-	gormAnnotation bool, xmlAnnotation bool, xormAnnotation bool,
-	fakerAnnotation bool, gureguTypes bool, structSorted bool) string {
+func isAutoInc(extra string) bool {
+	return strings.Contains(extra, "auto_increment")
+}
 
-	structure := "struct {"
+func isUnique(columnKey string) bool {
+	return isPrimaryKey(columnKey) || strings.Contains(columnKey, "UNI")
+}
 
-	keys := make([]string, 0, len(obj))
-	for key := range obj {
-		keys = append(keys, key)
-	}
-	if structSorted {
-		sort.Strings(keys)
-	}
+func isPrimaryKey(columnKey string) bool {
+	return strings.Contains(columnKey, "PRI")
+}
 
-	for _, key := range keys {
-		mysqlType := obj[key]
-		nullAble := false
-		if mysqlType["nullable"] == "YES" {
-			nullAble = true
-		}
+// generateMysqlTypes go struct entries for a map[string]interface{} structure
+func generateModelFields(table *Table, depth int, option *GenerateOption) string {
 
-		primary := ""
-		if mysqlType["primary"] == "PRI" {
-			primary = ";primary_key"
-		}
+	structure := ""
+
+	for _, column := range table.Columns {
 
 		// Get the corresponding go value type for this mysql type
-		valueType := mysqlTypeToGoType(mysqlType["value"], nullAble, gureguTypes)
+		valueType := mysqlTypeToGoType(column.Type, !column.NotNull, option.WithGureguTypes)
 
-		fieldName := fmtFieldName(stringifyFirstChar(key))
+		fieldName := fmtFieldName(stringifyFirstChar(column.Name))
 		var annotations []string
-		if gormAnnotation {
-			annotations = append(annotations, fmt.Sprintf("gorm:\"column:%s%s\"", key, primary))
+		if option.WithGormAnnotation {
+			annotations = append(annotations, generateGormAnnotation(column))
 		}
-		if jsonAnnotation {
-			annotations = append(annotations, fmt.Sprintf("json:\"%s\"", key))
+		if option.WithJsonAnnotation {
+			annotations = append(annotations, generateJSONAnnotation(column))
 		}
-
-		if dbAnnotation {
-			annotations = append(annotations, fmt.Sprintf("db:\"%s\"", key))
+		if option.WithDBAnnotation {
+			annotations = append(annotations, generateDBAnnotation(column))
 		}
-
-		if xmlAnnotation {
-			annotations = append(annotations, fmt.Sprintf("xml:\"%s\"", key))
+		if option.WithXmlAnnotation {
+			annotations = append(annotations, generateXMLAnnotation(column))
 		}
-		if xormAnnotation {
-			annotations = append(annotations, fmt.Sprintf("xorm:\"%s%s\"", key, primary))
+		if option.WithXormAnnotation {
+			annotations = append(annotations, generateXormAnnotation(column))
 		}
-		if fakerAnnotation {
-			annotations = append(annotations, fmt.Sprintf("faker:\"%s\"", key))
+		if option.WithFakerAnnotation {
+			annotations = append(annotations, generateFakerAnnotation(column))
 		}
 		if len(annotations) > 0 {
 			structure += fmt.Sprintf("\n%s %s `%s`",
@@ -127,6 +128,39 @@ func generateMysqlTypes(obj map[string]map[string]string, depth int, jsonAnnotat
 		}
 	}
 	return structure
+}
+
+func generateGormAnnotation(col Column) string {
+	buf := bytes.NewBuffer(nil)
+	buf.WriteString(fmt.Sprintf("column:%s", col.Name))
+	if col.PrimaryKey {
+		buf.WriteString(";primaryKey")
+	}
+	if col.Unique {
+		buf.WriteString(";unique")
+	}
+	if col.NotNull {
+		buf.WriteString(";not null")
+	}
+	if col.AutoInc {
+		buf.WriteString(";autoIncrement")
+	}
+	return fmt.Sprintf(`gorm:"%s"`, buf.String())
+}
+func generateJSONAnnotation(col Column) string {
+	return fmt.Sprintf(`json:"%s"`, col.Name)
+}
+func generateDBAnnotation(col Column) string {
+	return fmt.Sprintf(`db:"%s"`, col.Name)
+}
+func generateXMLAnnotation(col Column) string {
+	return fmt.Sprintf(`xml:"%s"`, col.Name)
+}
+func generateXormAnnotation(col Column) string {
+	return fmt.Sprintf(`xorm:"%s"`, col.Name)
+}
+func generateFakerAnnotation(col Column) string {
+	return fmt.Sprintf(`faker:"%s"`, col.Name)
 }
 
 // mysqlTypeToGoType converts the mysql types to go compatible sql.NullAble (https://golang.org/pkg/database/sql/) types

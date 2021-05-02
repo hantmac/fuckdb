@@ -2,9 +2,10 @@ package services
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
-	"github.com/lexkong/log"
 	"runtime/debug"
+
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type Response struct {
@@ -21,7 +22,7 @@ type ListResponse struct {
 
 //封装错误处理，避免冗余
 func HandleError(statusCode int, c *gin.Context, err error) {
-	log.Error("handle error:", err)
+	logrus.Errorln("handle error:", err)
 	c.Error(errors.New(string(debug.Stack())))
 	debug.PrintStack()
 	c.AbortWithStatusJSON(statusCode, Response{

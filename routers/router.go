@@ -3,8 +3,9 @@ package routers
 import (
 	"fuckdb/routers/middleware"
 	"fuckdb/services"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
@@ -19,13 +20,14 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		c.String(http.StatusNotFound, "The incorrect API route.")
 	})
 	// The health check handlers
-	db2s := g.Group("/api")
+	api := g.Group("/api")
 	{
-		db2s.GET("/health", services.HealthCheck)
-		db2s.POST("/db2struct", DbToGoStruct)
-		db2s.POST("/download", DownloadStructFile)
-		db2s.GET("/sql_str", services.FormatMysql)
-		db2s.GET("struct_sql", services.FromStructToSql)
+		api.GET("/health", services.HealthCheck)
+		api.POST("/db2struct", DbToGoStruct)
+		api.POST("/download", DownloadStructFile)
+		api.GET("/sql_str", services.FormatMysql)
+		api.GET("struct_sql", services.FromStructToSql)
+		api.POST("/tables", GetTables)
 	}
 	return g
 }

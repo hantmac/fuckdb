@@ -17,7 +17,8 @@ package cmd
 
 import (
 	"fmt"
-	"fuckdb/cmd/fuckdb/fuckdbGo"
+	fuckdb_go "fuckdb/cmd/fuckdb/fuckdbGo"
+
 	"github.com/spf13/cobra"
 )
 

@@ -1,11 +1,14 @@
 package bases
 
 import (
+	"bytes"
 	"fmt"
 	"go/format"
 	"strconv"
 	"strings"
 	"unicode"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Constants for return types of golang
@@ -75,31 +78,45 @@ var intToWordMap = []string{
 	"nine",
 }
 
-//Debug level logging
-var Debug = false
+type GenerateOption struct {
+	WithJsonAnnotation  bool
+	WithDBAnnotation    bool
+	WithGormAnnotation  bool
+	WithXmlAnnotation   bool
+	WithXormAnnotation  bool
+	WithFakerAnnotation bool
+	WithGureguTypes     bool
+	StructSorted        bool
+}
 
 // Generate Given a Column map with datatypes and a name structName,
 // attempts to generate a struct definition
-func Generate(columnTypes map[string]map[string]string, tableName string, structName string, pkgName string,
-	jsonAnnotation bool, dbAnnotation bool, gormAnnotation bool, xmlAnnotation bool, xormAnnotation bool,
-	fakerAnnotation bool, gureguTypes bool, structSorted bool) ([]byte, error) {
-
-	dbTypes := generateMysqlTypes(columnTypes, 0, jsonAnnotation, dbAnnotation, gormAnnotation, xmlAnnotation, xormAnnotation, fakerAnnotation, gureguTypes, structSorted)
-
-	src := fmt.Sprintf("package %s\ntype %s %s}",
-		pkgName,
-		structName,
-		dbTypes)
-	if gormAnnotation {
-		tableNameFunc := "// TableName sets the insert table name for this struct type\n" +
-			"func (" + strings.ToLower(string(structName[0])) + " *" + structName + ") TableName() string {\n" +
-			"	return \"" + tableName + "\"" +
-			"}"
-		src = fmt.Sprintf("%s\n%s", src, tableNameFunc)
+func Generate(table *Table, structName string, pkgName string, option *GenerateOption) ([]byte, error) {
+	if pkgName == "" {
+		pkgName = "models"
 	}
-	formatted, err := format.Source([]byte(src))
+
+	if structName == "" {
+		structName = fmtFieldName(table.Name) + "Model"
+	}
+
+	fields := generateModelFields(table, 0, option)
+
+	buf := bytes.NewBuffer(nil)
+	if err := modelTemplate.Execute(buf, map[string]interface{}{
+		"Table":       table,
+		"PackageName": pkgName,
+		"ModelName":   structName,
+		"Option":      option,
+		"Fields":      fields,
+	}); err != nil {
+		logrus.Errorln("execute template error:", err)
+		return nil, err
+	}
+
+	formatted, err := format.Source(buf.Bytes())
 	if err != nil {
-		err = fmt.Errorf("error formatting: %s, was formatting\n%s", err, src)
+		err = fmt.Errorf("error formatting: %s, was formatting\n%s", err, buf.String())
 	}
 	return formatted, err
 }

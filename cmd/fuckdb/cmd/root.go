@@ -17,8 +17,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
+
+	"github.com/spf13/cobra"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -34,8 +35,4 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-}
-
-func init() {
-
 }

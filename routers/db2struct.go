@@ -2,13 +2,12 @@ package routers
 
 import (
 	"errors"
-	"fmt"
 	"fuckdb/bases"
 	"fuckdb/services"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lexkong/log"
+	"github.com/sirupsen/logrus"
 )
 
 type MysqlInfoReqData struct {
@@ -35,7 +34,7 @@ func DbToGoStruct(c *gin.Context) {
 	err := c.ShouldBindJSON(&mysqlInfo)
 	if err != nil {
 		services.HandleError(http.StatusBadRequest, c, err)
-		log.Error("Bind Err", err)
+		logrus.Errorln("Bind Err", err)
 		return
 	}
 
@@ -46,37 +45,34 @@ func DbToGoStruct(c *gin.Context) {
 	if mysqlInfo.MysqlPort == 0 {
 		mysqlInfo.MysqlPort = 3306
 	}
-	columnDataTypes, err := bases.GetColumnsFromMysqlTable(mysqlInfo.MysqlUser, mysqlInfo.MysqlPasswd,
+	table, err := bases.GetTableInfo(mysqlInfo.MysqlUser, mysqlInfo.MysqlPasswd,
 		mysqlInfo.MysqlHost, mysqlInfo.MysqlPort, mysqlInfo.MysqlDB, mysqlInfo.MysqlTable)
 	if err != nil {
-		fmt.Println("Error in selecting column data information from mysql information schema")
+		logrus.Errorln("Error in selecting column data information from mysql information schema")
 		services.HandleError(http.StatusInternalServerError, c, err)
 		return
 	}
 
-	if mysqlInfo.StructName == "" {
-		mysqlInfo.StructName = "MyNewStruct"
-	}
-	if mysqlInfo.PackageName == "" {
-		mysqlInfo.PackageName = "my_new_package"
-	}
-
-	if !mysqlInfo.StructSorted {
-		mysqlInfo.StructSorted = false
-	}
-
-	structInfo, err := bases.Generate(*columnDataTypes, mysqlInfo.MysqlTable, mysqlInfo.StructName,
-		mysqlInfo.PackageName, mysqlInfo.JsonAnnotation, mysqlInfo.DBAnnotation, mysqlInfo.GormAnnotation,
-		mysqlInfo.XmlAnnotation, mysqlInfo.XormAnnotation, mysqlInfo.FakerAnnotation,
-		mysqlInfo.GureGuTypes, mysqlInfo.StructSorted)
+	structInfo, err := bases.Generate(table, mysqlInfo.StructName,
+		mysqlInfo.PackageName,
+		&bases.GenerateOption{
+			WithJsonAnnotation:  mysqlInfo.JsonAnnotation,
+			WithDBAnnotation:    mysqlInfo.DBAnnotation,
+			WithGormAnnotation:  mysqlInfo.GormAnnotation,
+			WithXmlAnnotation:   mysqlInfo.XmlAnnotation,
+			WithXormAnnotation:  mysqlInfo.XormAnnotation,
+			WithFakerAnnotation: mysqlInfo.FakerAnnotation,
+			WithGureguTypes:     mysqlInfo.GureGuTypes,
+			StructSorted:        mysqlInfo.StructSorted,
+		})
 
 	if err != nil {
-		fmt.Println("Error in creating struct from json: " + err.Error())
+		logrus.Errorln("Error in creating struct from json: " + err.Error())
 		services.HandleError(http.StatusInternalServerError, c, err)
 		return
 	}
 
-	fmt.Println(string(structInfo))
+	logrus.Debugln(string(structInfo))
 	c.JSON(http.StatusOK, services.Response{
 		Status:  "0",
 		Message: "Ok",

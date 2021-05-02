@@ -1,17 +1,7 @@
 name:  DbToGoStruct         # API Server的名字
 gormlog: true
 server:
-  host: 0.0.0.0
+  host: 127.0.0.1
   port: 8000
-log:
-  writers: file,stdout
-  logger_level: DEBUG
-  path: logs
-  logger_file: logs/db2s.log
-  log_format_text: false
-  rollingPolicy: size
-  log_rotate_date: 1
-  log_rotate_size: 1
-  log_backup_count: 7
 
 genFilePath: ./
