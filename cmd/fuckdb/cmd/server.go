@@ -11,7 +11,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
+	"runtime"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -112,4 +114,42 @@ func startHTTPServer(host, port string) {
 	}
 
 	<-processed
+}
+
+func openBrowser(url string) {
+	switch runtime.GOOS {
+	case "darwin":
+		openFreeBSDBrowser(url)
+
+	case "linux":
+		openLinuxBrowser(url)
+
+	case "windows":
+		openWinBrowser(url)
+	default:
+		logrus.Errorf("no such os: %v", runtime.GOOS)
+	}
+
+}
+
+func openFreeBSDBrowser(url string) {
+	openCmd := exec.Command("open", url)
+	if err := openCmd.Run(); err != nil {
+		logrus.Errorln("open browser error, please open browser manually:", url)
+	}
+}
+
+func openLinuxBrowser(url string) {
+	openCmd := exec.Command("x-www-browser", url)
+	if err := openCmd.Run(); err != nil {
+		logrus.Errorln("open browser error, please open browser manually:", url)
+	}
+}
+
+func openWinBrowser(url string) {
+	cmd := exec.Command("cmd", "/C", "start", url)
+
+	if err := cmd.Run(); err != nil {
+		logrus.Errorln("open browser error, please open browser manually:", url)
+	}
 }
