@@ -15,10 +15,10 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 ### Source code deploy
 - git clone the source code
 - cd fuckdb/
-- make build-frontend
-- make start
-- Use `localhost:8000` you will get the web UI
-- The same operation with docker deployment.
+- make build
+- fuckdb server
+
+Then UI will be opened.
 
 ### Docker deploy
 - modify your backend ip in  `frontend/src/config/index.js`
@@ -65,6 +65,9 @@ wget https://github.com/hantmac/fuckdb/releases/download/v0.3/fuckdb_linux.tar.g
 ```
 
 - then run `fuckdb go` and get your code!
+
+If you want use UI on localhost you can use `fuckdb server` and will open browser in one second.
+![server](https://z3.ax1x.com/2021/05/03/gmYPe0.gif)
 
 More info => 'Go_Official_Blog' on WeChat:
 
