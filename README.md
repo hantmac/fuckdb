@@ -1,6 +1,7 @@
 
 # fuckdb
 - [中文](https://github.com/hantmac/fuckdb/blob/master/README_zh.md)
+- [相关文章](https://mp.weixin.qq.com/s?__biz=MzIxNTU0ODY1NQ==&amp;mid=2247484336&amp;idx=1&amp;sn=07097166a6e6b5a113599e7d2f572c2d&amp;chksm=9797d430a0e05d26b30999ca042cb9ab4b1927a97b1bad439c3e06e51ae9ef46022e2a315e96&token=918317406&lang=zh_CN#rd)
 - English
 
 ![Example to show fuckdb](http://static.vue2.net/db.gif)
