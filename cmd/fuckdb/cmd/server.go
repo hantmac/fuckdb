@@ -4,6 +4,7 @@ import (
 	"context"
 	"embed"
 	"fmt"
+	"fuckdb/bases"
 	"fuckdb/config"
 	"fuckdb/routers"
 	"fuckdb/routers/middleware"
@@ -14,6 +15,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"runtime"
+	"text/template"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -32,6 +34,15 @@ var serverCmd = &cobra.Command{
 			logrus.Fatalln("init config error:%s", err)
 		}
 		logrus.Infoln("config init success")
+
+		tplFile := viper.GetString("customTmpl")
+		if tplFile != "" {
+			tmpl, err := template.ParseFiles(tplFile)
+			if err != nil {
+				logrus.Fatalln("parse template files error:", err)
+			}
+			bases.SetModelTemplate(tmpl)
+		}
 
 		var host = viper.GetString("server.host")
 		var port = viper.GetString("server.port")
@@ -119,7 +130,7 @@ func startHTTPServer(host, port string) {
 func openBrowser(url string) {
 	switch runtime.GOOS {
 	case "darwin":
-		openFreeBSDBrowser(url)
+		openDarwinBrowser(url)
 
 	case "linux":
 		openLinuxBrowser(url)
@@ -132,7 +143,7 @@ func openBrowser(url string) {
 
 }
 
-func openFreeBSDBrowser(url string) {
+func openDarwinBrowser(url string) {
 	openCmd := exec.Command("open", url)
 	if err := openCmd.Run(); err != nil {
 		logrus.Errorln("open browser error, please open browser manually:", url)

@@ -14,6 +14,12 @@ func init() {
 	curdFuncTemplate, _ = modelTemplate.New("curdFunc").Parse(curdFuncTpl)
 }
 
+func SetModelTemplate(tmpl *template.Template) {
+	if tmpl != nil {
+		modelTemplate = tmpl
+	}
+}
+
 var modelTpl = `
 package {{ .PackageName }}
 
