@@ -41,7 +41,7 @@ Then UI will be opened.
 - Linux 
 
  ```
-wget https://github.com/hantmac/fuckdb/releases/download/v1.0/fuckdb_linux.tar.gz &&  tar -zxvf fuckdb_linux.tar.gz
+wget https://github.com/hantmac/fuckdb/releases/download/v1.0.1/fuckdb_linux.tar.gz &&  tar -zxvf fuckdb_linux.tar.gz
   ```
   
 - windows 
