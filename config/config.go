@@ -1,12 +1,15 @@
 package config
 
 import (
-	"strings"
-
+	"bytes"
+	_ "embed"
 	"github.com/fsnotify/fsnotify"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
+
+//go:embed config.yaml
+var configBytes []byte
 
 type Config struct {
 	Name string
@@ -20,20 +23,12 @@ func (c *Config) WatchConfig() {
 }
 
 func (c *Config) Init() error {
-	if c.Name != "" {
-		viper.SetConfigName(c.Name)
-	} else {
-		viper.AddConfigPath("./config")
-		viper.SetConfigName("config")
-	}
 	viper.SetConfigType("yaml")
-	viper.AutomaticEnv()
-	viper.SetEnvPrefix("monitor")
-	replacer := strings.NewReplacer(".", "_")
-	viper.SetEnvKeyReplacer(replacer)
-	if err := viper.ReadInConfig(); err != nil {
+	err := viper.ReadConfig(bytes.NewBufferString(string(configBytes)))
+	if err != nil {
 		return err
 	}
+	viper.AutomaticEnv()
 
 	return nil
 }
