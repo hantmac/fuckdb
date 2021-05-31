@@ -35,7 +35,7 @@ var serverCmd = &cobra.Command{
 		}
 		logrus.Infoln("config init success")
 
-		tplFile := viper.GetString("customTmpl")
+		tplFile := viper.GetString("example.tpl")
 		if tplFile != "" {
 			tmpl, err := template.ParseFiles(tplFile)
 			if err != nil {

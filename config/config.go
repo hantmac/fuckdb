@@ -2,14 +2,14 @@ package config
 
 import (
 	"bytes"
-	"embed"
+	_ "embed"
 	"github.com/fsnotify/fsnotify"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
-//go:embed conf
-var configBytes embed.FS
+//go:embed config.yaml
+var configBytes []byte
 
 type Config struct {
 	Name string
@@ -23,9 +23,8 @@ func (c *Config) WatchConfig() {
 }
 
 func (c *Config) Init() error {
-	by, err := configBytes.ReadFile("conf/config.yaml")
 	viper.SetConfigType("yaml")
-	err = viper.ReadConfig(bytes.NewBufferString(string(by)))
+	err := viper.ReadConfig(bytes.NewBufferString(string(configBytes)))
 	if err != nil {
 		return err
 	}

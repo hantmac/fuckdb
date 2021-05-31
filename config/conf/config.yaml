@@ -1,9 +1,0 @@
-name:  DbToGoStruct         # API Server的名字
-gormlog: true
-server:
-  host: 127.0.0.1
-  port: 8000
-
-customTmpl: ./config/example.tpl
-
-genFilePath: ./
