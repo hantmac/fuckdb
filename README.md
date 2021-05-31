@@ -21,16 +21,6 @@ Only a few clicks on the web UI can generate the corresponding golang struct wit
 
 Then UI will be opened.
 
-### Docker deploy
-- modify your backend ip in  `frontend/src/config/index.js`
-- docker-compose up -d
-- Use `localhost:8000` you will get the next page
-![](https://tva1.sinaimg.cn/large/006tNbRwgy1g9w1ru6tl4j31wb0u0aft.jpg)
-- Just Put your mariaDB/mysql info into it and you will get your golang code.
-- Click generate.
-- Boom！Enjoy your coffee and copy your struct code.
-![](https://tva1.sinaimg.cn/large/006tNbRwly1g9w531osobj31u90u0jzq.jpg)
-
 ### CMD - fuckdb Lite
 > tips: fuckdb Lite is a undependent tool, no need to install fuckdb first.
 #### install
@@ -69,6 +59,17 @@ wget https://github.com/hantmac/fuckdb/releases/download/v1.0.1/fuckdb_linux.tar
 
 If you want use UI on localhost you can use `fuckdb server` and will open browser in one second.
 ![server](https://z3.ax1x.com/2021/05/03/gmYPe0.gif)
+
+### Docker deploy
+- modify your backend ip in  `frontend/src/config/index.js`
+- docker-compose up -d
+- Use `localhost:8000` you will get the next page
+![](https://tva1.sinaimg.cn/large/006tNbRwgy1g9w1ru6tl4j31wb0u0aft.jpg)
+- Just Put your mariaDB/mysql info into it and you will get your golang code.
+- Click generate.
+- Boom！Enjoy your coffee and copy your struct code.
+![](https://tva1.sinaimg.cn/large/006tNbRwly1g9w531osobj31u90u0jzq.jpg)
+
 
 More info => 'Go_Official_Blog' on WeChat:
 
