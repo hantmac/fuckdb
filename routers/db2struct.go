@@ -79,3 +79,30 @@ func DbToGoStruct(c *gin.Context) {
 		Data:    string(structInfo),
 	})
 }
+
+func TestConn(c *gin.Context) {
+	var mysqlInfo MysqlInfoReqData
+	err := c.ShouldBindJSON(&mysqlInfo)
+	if err != nil {
+		services.HandleError(http.StatusBadRequest, c, err)
+		logrus.Errorln("Bind Err", err)
+		return
+	}
+
+	if mysqlInfo.MysqlHost == "" || mysqlInfo.MysqlDB == "" || mysqlInfo.MysqlTable == "" {
+		services.HandleError(http.StatusBadRequest, c, errors.New("Need Mysql Info "))
+		return
+	}
+	if mysqlInfo.MysqlPort == 0 {
+		mysqlInfo.MysqlPort = 3306
+	}
+
+	if _, err := bases.ConnectToDB(mysqlInfo.MysqlUser, mysqlInfo.MysqlPasswd, mysqlInfo.MysqlHost, mysqlInfo.MysqlPort, mysqlInfo.MysqlDB); err != nil {
+		services.HandleError(http.StatusOK, c, err)
+	}
+
+	c.JSON(http.StatusOK, services.Response{
+		Status:  "0",
+		Message: "Ok",
+	})
+}

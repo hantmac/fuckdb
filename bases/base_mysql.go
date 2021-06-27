@@ -10,9 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// GetTableInfo query table details from information schema
-func GetTableInfo(user string, password string, host string, port int, dbname string, tableName string) (*Table, error) {
-
+func ConnectToDB(user, password, host string, port int, dbname string) (*sql.DB, error) {
 	var err error
 	var db *sql.DB
 	if password != "" {
@@ -20,6 +18,22 @@ func GetTableInfo(user string, password string, host string, port int, dbname st
 	} else {
 		db, err = sql.Open("mysql", user+"@tcp("+host+":"+strconv.Itoa(port)+")/"+dbname+"?&parseTime=True")
 	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := db.Ping(); err != nil {
+		return nil, err
+	}
+
+	return db, nil
+}
+
+// GetTableInfo query table details from information schema
+func GetTableInfo(user string, password string, host string, port int, dbname string, tableName string) (*Table, error) {
+
+	db, err := ConnectToDB(user, password, host, port, dbname)
 
 	// Check for error in db, note this does not check connectivity but does check uri
 	if err != nil {
