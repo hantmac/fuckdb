@@ -89,7 +89,7 @@ func TestConn(c *gin.Context) {
 		return
 	}
 
-	if mysqlInfo.MysqlHost == "" || mysqlInfo.MysqlDB == "" || mysqlInfo.MysqlTable == "" {
+	if mysqlInfo.MysqlHost == "" || mysqlInfo.MysqlDB == "" {
 		services.HandleError(http.StatusBadRequest, c, errors.New("Need Mysql Info "))
 		return
 	}
@@ -99,6 +99,7 @@ func TestConn(c *gin.Context) {
 
 	if _, err := bases.ConnectToDB(mysqlInfo.MysqlUser, mysqlInfo.MysqlPasswd, mysqlInfo.MysqlHost, mysqlInfo.MysqlPort, mysqlInfo.MysqlDB); err != nil {
 		services.HandleError(http.StatusOK, c, err)
+		return
 	}
 
 	c.JSON(http.StatusOK, services.Response{

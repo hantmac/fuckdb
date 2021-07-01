@@ -148,7 +148,7 @@
         </el-form-item>
         <el-form-item label-width="100px">
           <el-button type="primary" @click="saveConnection">Add</el-button>
-          <el-button>test connection</el-button>
+          <el-button @click="detectConnection">test connection</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -254,6 +254,27 @@ type testDB struct {
           return
         }
         return false
+      })
+    },
+    detectConnection() {
+      this.$refs['connForm'].validate(valid => {
+        if (valid) {
+          let data = this.newConnectionForm
+          const vueInstance = this
+          service({
+            url: "/api/testconn",
+            method: "post",
+            data,
+          }).then(res => {
+            if (res.data.status === "0") {
+              vueInstance.$message.success("connect to database success!")
+            } else {
+              vueInstance.$message.error("connect to db error: " + res.data.error)
+            }
+          }).catch(err => {
+            vueInstance.$message.error(err)
+          })
+        }
       })
     },
     GetDb2struct() {
