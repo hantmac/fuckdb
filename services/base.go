@@ -24,7 +24,6 @@ type ListResponse struct {
 func HandleError(statusCode int, c *gin.Context, err error) {
 	logrus.Errorln("handle error:", err)
 	c.Error(errors.New(string(debug.Stack())))
-	debug.PrintStack()
 	c.AbortWithStatusJSON(statusCode, Response{
 		Status:  "-1",
 		Message: "error",
