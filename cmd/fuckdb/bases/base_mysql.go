@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 // GetColumnsFromMysqlTable Select column details from information schema and return map of map
@@ -55,8 +56,9 @@ func GetColumnsFromMysqlTable(mariadbUser string, mariadbPassword string, mariad
 		var dataType string
 		var nullable string
 		rows.Scan(&column, &columnKey, &dataType, &nullable)
+		afterColumn := snakeToCamelString(column)
 
-		columnDataTypes[column] = map[string]string{"value": dataType, "nullable": nullable, "primary": columnKey}
+		columnDataTypes[afterColumn] = map[string]string{"value": dataType, "nullable": nullable, "primary": columnKey}
 	}
 
 	return &columnDataTypes, err
@@ -173,6 +175,37 @@ func mysqlTypeToGoType(mysqlType string, nullable bool, gureguTypes bool) string
 		return golangFloat32
 	case "binary", "blob", "longblob", "mediumblob", "varbinary":
 		return golangByteArray
+	}
+	return ""
+}
+
+func snakeToCamelString(s string) string {
+	data := make([]byte, 0, len(s))
+	j := false
+	k := false
+	num := len(s) - 1
+	for i := 0; i <= num; i++ {
+		d := s[i]
+		if k == false && d >= 'A' && d <= 'Z' {
+			k = true
+		}
+		if d >= 'a' && d <= 'z' && (j || k == false) {
+			d = d - 32
+			j = false
+			k = true
+		}
+		if k && d == '_' && num > i && s[i+1] >= 'a' && s[i+1] <= 'z' {
+			j = true
+			continue
+		}
+		data = append(data, d)
+	}
+	return lcfirst(string(data[:]))
+}
+
+func lcfirst(str string) string {
+	for i, v := range str {
+		return string(unicode.ToLower(v)) + str[i+1:]
 	}
 	return ""
 }
